@@ -1,0 +1,4 @@
+int string base_view 0x0
+int string satellite_view 0x0
+int string terrain_view 0x0
+int string traffic_view 0x0

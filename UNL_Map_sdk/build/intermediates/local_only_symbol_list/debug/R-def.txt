@@ -1,0 +1,6 @@
+R_DEF: Internal format may change without notice
+local
+string base_view
+string satellite_view
+string terrain_view
+string traffic_view

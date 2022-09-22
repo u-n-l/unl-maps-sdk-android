@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.app.unl_project.app-mergeDebugResources-30:/values-he/values-he.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Aamir Bashir\\.gradle\\caches\\transforms-3\\b1774152badee25ca402bf8daf5450c7\\transformed\\android-sdk-9.5.2\\res\\values-he\\values-he.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "55,177,266,382,485,637,751",
+                        "endColumns": "121,88,115,102,151,113,136",
+                        "endOffsets": "172,261,377,480,632,746,883"
+                    }
+                }
+            ]
+        }
+    ]
+}
