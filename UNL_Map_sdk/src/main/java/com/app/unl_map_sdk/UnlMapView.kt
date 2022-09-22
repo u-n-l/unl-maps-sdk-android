@@ -3,7 +3,6 @@ package com.app.unl_map_sdk
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
-import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -14,7 +13,7 @@ import com.mapbox.mapboxsdk.module.http.HttpRequestUtil
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
-class TestMapView @JvmOverloads constructor(
+class UnlMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
 ) : MapView(context, attrs) {
     var mapbox: MapboxMap? = null
