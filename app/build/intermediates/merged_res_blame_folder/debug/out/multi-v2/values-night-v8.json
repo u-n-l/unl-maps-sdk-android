@@ -38,14 +38,14 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Aamir Bashir\\AndroidStudioProjects\\UNL_Project\\app\\src\\main\\res\\values-night\\themes.xml",
+                    "source": "F:\\Codebrew\\unl-maps-sdk-android\\app\\src\\main\\res\\values-night\\themes.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
-                        "startOffsets": "100",
+                        "startOffsets": "102",
                         "endLines": "14",
                         "endColumns": "12",
-                        "endOffsets": "820"
+                        "endOffsets": "834"
                     },
                     "to": {
                         "startLines": "33",
