@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="satellite_view">https://alpha.studio.unl.global/map_styles_satellite.json</string>
+    <string name="traffic_view">https://alpha.studio.unl.global/map_styles_traffic.json</string>
+    <string name="terrain_view">https://alpha.studio.unl.global/map_styles_terrain.json</string>
+    <string name="base_view">https://alpha.studio.unl.global/map_styles_base.json</string>
+</resources>
