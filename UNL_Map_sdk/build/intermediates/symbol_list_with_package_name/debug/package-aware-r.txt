@@ -1,5 +1,0 @@
-com.app.unl_map_sdk
-string base_view
-string satellite_view
-string terrain_view
-string traffic_view
