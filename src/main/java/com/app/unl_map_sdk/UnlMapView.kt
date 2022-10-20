@@ -2,6 +2,7 @@ package com.app.unl_map_sdk
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.contains
@@ -34,7 +35,9 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.uiSettings?.setAttributionMargins(15, 0, 0, 15)
             mapbox?.uiSettings?.isAttributionEnabled = false
             mapbox?.uiSettings?.isLogoEnabled = false
-
+            mapbox?.addOnCameraIdleListener {
+                Log.e("EVENT","Map Move End")
+            }
             mapbox?.cameraPosition = CameraPosition.Builder()
                 .target(LatLng(34.126256, 74.832149))
                 .zoom(12.0)
@@ -97,7 +100,6 @@ class UnlMapView @JvmOverloads constructor(
                 url = Constants.SATELLITE
             }
         }
-
 
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
