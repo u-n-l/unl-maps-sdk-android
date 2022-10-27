@@ -1,7 +1,7 @@
 package com.app.unl_map_sdk.data
 
 object Constants {
-    val BASE_URL= "https://alpha.studio.unl.global/"
+    val BASE_URL= "https://alpha.platform.unl.global/"
     val TERRAIN= "${BASE_URL}map_styles_terrain.json"
     val BASE= "${BASE_URL}map_styles_base.json"
     val TRAFFIC= "${BASE_URL}map_styles_traffic.json"

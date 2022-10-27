@@ -40,6 +40,7 @@ dependencies {
     api ('org.maplibre.gl:android-sdk:9.5.2'){
         exclude group: 'com.google.android.gms'
     }
+    implementation 'unl:core:1.0.1'
     //Interceptor
     def interceptor = "4.9.0"
     implementation "com.squareup.okhttp3:logging-interceptor:$interceptor"

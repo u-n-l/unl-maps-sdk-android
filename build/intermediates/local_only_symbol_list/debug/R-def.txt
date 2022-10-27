@@ -1,0 +1,21 @@
+R_DEF: Internal format may change without notice
+local
+drawable base
+drawable baseline_arrow_down
+drawable ic_baseline_arrow_drop_down_24
+drawable satellite
+drawable selected_item
+drawable terrain
+drawable tile_list_bg
+drawable traffic
+drawable vectorial
+id imageView
+id ivTile
+id recyclerView
+id tvTitle
+layout item_tile_selector
+layout layout_tile_selector
+string base_view
+string satellite_view
+string terrain_view
+string traffic_view
