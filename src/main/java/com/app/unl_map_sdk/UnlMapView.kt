@@ -30,6 +30,7 @@ class UnlMapView @JvmOverloads constructor(
 ) : MapView(context, attrs), TilesAdapter.ItemSelectedListener {
     private var tilesRecycler: RecyclerView? = null
     private var isVisibleTiles: Boolean = false
+    private var isVisibleGrids: Boolean = false
     private lateinit var ivTile: ImageView
     private lateinit var ivArrow: ImageView
     private var tileSelectorView: View? = null
@@ -46,23 +47,7 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.uiSettings?.isLogoEnabled = false
             mapbox?.addOnCameraIdleListener {
                 Log.e("EVENT", "Map Move End")
-                var latLngBounds = mapbox?.projection?.visibleRegion?.latLngBounds
-                var bounds = Bounds(latLngBounds?.latNorth!!,
-                    latLngBounds.lonEast,
-                    latLngBounds.latSouth,
-                    latLngBounds.lonWest)
-                var zoomLevel = mapbox?.cameraPosition?.zoom!!
-                if (zoomLevel >= 17) {
-                    var lines = UnlCore.gridLines(bounds, 9)
-                    LoadGeoJson(this, this.context, lines).execute(lines);
-                } else {
-                    mapbox?.getStyle { style ->
-                        if (style.layers.size > 0) {
-                            style.removeLayer("linelayer")
-                            style.removeSource("line-source")
-                        }
-                    }
-                }
+                loadGrids()
             }
             mapbox?.cameraPosition = CameraPosition.Builder()
                 .target(LatLng(LATITUDE, LONGITUDE))
@@ -72,11 +57,36 @@ class UnlMapView @JvmOverloads constructor(
         }
     }
 
+    private fun loadGrids() {
+        var latLngBounds = mapbox?.projection?.visibleRegion?.latLngBounds
+        var bounds = Bounds(latLngBounds?.latNorth!!,
+            latLngBounds.lonEast,
+            latLngBounds.latSouth,
+            latLngBounds.lonWest)
+        var zoomLevel = mapbox?.cameraPosition?.zoom!!
+        if (zoomLevel >= 17 && isVisibleGrids) {
+            var lines = UnlCore.gridLines(bounds, 9)
+            LoadGeoJson(this, this.context, lines).execute(lines);
+        } else {
+            mapbox?.getStyle { style ->
+                if (style.layers.size > 0) {
+                    style.removeLayer("linelayer")
+                    style.removeSource("line-source")
+                }
+            }
+        }
+    }
+
     fun enableTileSelector(boolean: Boolean = true) {
 
         tileSelectorView = inflate(context, R.layout.layout_tile_selector, null)
+        var imageView = inflate(context, R.layout.item_grid_selector, null)
         tilesRecycler = tileSelectorView?.findViewById<RecyclerView>(R.id.recyclerView)
         ivTile = tileSelectorView?.findViewById<ImageView>(R.id.ivTile)!!
+        var imageViewParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        imageViewParams.setMargins(10, 10, 0, 0)
+        imageView?.layoutParams = imageViewParams
+        addView(imageView)
         ivArrow = tileSelectorView?.findViewById<ImageView>(R.id.imageView)!!
         tilesRecycler?.adapter = TilesAdapter(context, TileEnum.values(), this)
         tileSelectorLayoutParams =
@@ -88,6 +98,20 @@ class UnlMapView @JvmOverloads constructor(
             if (contains(tileSelectorView!!))
                 removeView(tileSelectorView)
         }
+        imageView.setOnClickListener {
+            isVisibleGrids = !isVisibleGrids
+            if (!isVisibleGrids) {
+                mapbox?.getStyle { style ->
+                    if (style.layers.size > 0) {
+                        style.removeLayer("linelayer")
+                        style.removeSource("line-source")
+                    }
+                }
+            } else {
+                loadGrids()
+            }
+        }
+
         ivTile.setOnClickListener {
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
@@ -129,7 +153,7 @@ class UnlMapView @JvmOverloads constructor(
         }
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
-
+            loadGrids()
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
                 ivArrow.visibility = GONE
@@ -140,7 +164,6 @@ class UnlMapView @JvmOverloads constructor(
             isVisibleTiles = !isVisibleTiles
         }
     }
-
 
 
     companion object {
@@ -156,15 +179,17 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.getStyle { style ->
                 if (featureCollection.features() != null) {
                     if (featureCollection.features()!!.size > 0) {
-                        if (style.layers.size > 0) {
-                            style.removeLayer("linelayer")
-                            style.removeSource("line-source")
+                        var src = style.getSource("line-source")
+                        if (src != null) {
+                            (src as GeoJsonSource).setGeoJson(featureCollection)
+                        } else {
+                            style.addSource(GeoJsonSource("line-source", featureCollection))
+                            style.addLayer(LineLayer("linelayer", "line-source")
+                                .withProperties(
+                                    PropertyFactory.lineWidth(1f),
+                                    PropertyFactory.lineColor(Color.parseColor("#C0C0C0"))))
                         }
-                        style.addSource(GeoJsonSource("line-source", featureCollection))
-                        style.addLayer(LineLayer("linelayer", "line-source")
-                            .withProperties(
-                                PropertyFactory.lineWidth(0.5f),
-                                PropertyFactory.lineColor(Color.parseColor("#C0C0C0"))))
+
                     }
                 }
             }
