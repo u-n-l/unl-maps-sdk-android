@@ -1,20 +1,15 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/u-n-l/core-java")
+            credentials {
+                username = "HarshKapoorUni"
+                password = "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"
+            }
+        }
     }
 }
-rootProject.name = "UNL_Project"
-include ':app'
-include ':UNL_SDK'
-include ':MapboxGLAndroidSDK'
-include ':MapboxGLAndroidSDKLint'
-include ':UNL_Map_sdk'
