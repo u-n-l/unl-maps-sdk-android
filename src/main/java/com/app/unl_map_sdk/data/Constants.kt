@@ -73,21 +73,18 @@ fun getZoomLevels(): ArrayList<Int> {
     zooms.add(3)
     zooms.add(2)
     return zooms
-
 }
 
-fun getCellPrecisions(): ArrayList<Int> {
-    var precisions = ArrayList<Int>()
-    precisions.add(10)
-    precisions.add(9)
-    precisions.add(8)
-    precisions.add(7)
-    precisions.add(6)
-    precisions.add(5)
-    precisions.add(4)
-    precisions.add(3)
-    precisions.add(2)
-    precisions.add(1)
+fun getCellPrecisions():  HashMap<ZoomLevel,Int> {
+    var precisions = HashMap<ZoomLevel,Int>()
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+    precisions[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 10
+
     return precisions
 }
 
@@ -115,4 +112,11 @@ enum class CellPrecision {
     GEOHASH_LENGTH_3,
     GEOHASH_LENGTH_2,
     GEOHASH_LENGTH_1
+}
+
+enum class SourceIDs {
+    GRID_SOURCE_ID
+}
+enum class LayerIDs {
+    GRID_LAYER_ID
 }

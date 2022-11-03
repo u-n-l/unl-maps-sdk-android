@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.helpers
+package com.app.unl_map_sdk.helpers.grid_controls
 
 import android.content.Context
 import android.os.AsyncTask
@@ -30,7 +30,7 @@ class LoadGeoJson(
         val data: MutableList<Array<DoubleArray>>? = dataRef.get()
         val map: UnlMapView? = mapRef.get()
         if (activity != null && featureCollection != null) {
-            map?.drawLines(featureCollection)
+            map?.mapbox.drawLines(featureCollection)
         }
     }
 
