@@ -1,21 +1,19 @@
 package com.app.unl_map_sdk.helpers.tile_controls
 
-import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.view.contains
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.UnlMapView
+import com.app.unl_map_sdk.views.UnlMapView
 import com.app.unl_map_sdk.adapters.TilesAdapter
 import com.app.unl_map_sdk.data.TileEnum
 import com.mapbox.mapboxsdk.maps.MapView
 
 fun UnlMapView.enableTileSelector(
-    boolean: Boolean = true,
-    activity: Activity,
+    boolean: Boolean = false
 ) {
-    this.activity = activity
     tileSelectorView = MapView.inflate(context, R.layout.layout_tile_selector, null)
     tilesRecycler = tileSelectorView?.findViewById<RecyclerView>(R.id.recyclerView)
     ivTile = tileSelectorView?.findViewById<ImageView>(R.id.ivTile)!!
@@ -30,6 +28,7 @@ fun UnlMapView.enableTileSelector(
     } else {
         if (contains(tileSelectorView!!))
             removeView(tileSelectorView)
+        loadStyle(TileEnum.TERRAIN)
     }
 
     ivTile.setOnClickListener {

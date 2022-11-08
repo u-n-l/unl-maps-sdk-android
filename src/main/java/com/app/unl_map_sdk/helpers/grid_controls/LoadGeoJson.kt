@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import androidx.annotation.Nullable
-import com.app.unl_map_sdk.UnlMapView
+import com.app.unl_map_sdk.views.UnlMapView
 import com.app.unl_map_sdk.data.MyFeature
 import com.app.unl_map_sdk.data.Props
 import com.google.gson.Gson
