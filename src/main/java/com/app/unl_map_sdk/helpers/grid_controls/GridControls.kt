@@ -3,7 +3,6 @@ package com.app.unl_map_sdk.helpers.grid_controls
 import android.content.Context
 import android.graphics.Color
 import android.widget.FrameLayout
-import androidx.fragment.app.FragmentManager
 import com.app.unl_map_sdk.R
 import com.app.unl_map_sdk.data.*
 import com.app.unl_map_sdk.views.PrecisionDialog
@@ -13,6 +12,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import unl.core.Bounds
 import unl.core.UnlCore
@@ -24,23 +24,25 @@ fun MapboxMap?.loadGrids(
     cellPrecision: CellPrecision,
 ) {
     var latLngBounds = this?.projection?.visibleRegion?.latLngBounds
-    var mapBoundsWidth = latLngBounds?.northEast?.longitude!! - latLngBounds?.southWest?.longitude!!
-    var mapBoundsHeight = latLngBounds?.northEast?.latitude!! - latLngBounds?.southWest?.latitude!!
+    var mapBoundsWidth = latLngBounds?.northEast?.longitude!! - latLngBounds.southWest.longitude
+    var mapBoundsHeight = latLngBounds.northEast.latitude - latLngBounds.southWest.latitude
 
-    var bounds = Bounds(latLngBounds?.latNorth!! + mapBoundsWidth,
+    var bounds = Bounds(latLngBounds.latNorth + mapBoundsWidth,
         latLngBounds.lonEast + mapBoundsHeight,
         latLngBounds.latSouth - mapBoundsWidth,
         latLngBounds.lonWest - mapBoundsHeight)
     var zoomLevel = this?.cameraPosition?.zoom!!
     var minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]
-    if (zoomLevel >= minZoom!! && isVisibleGrids) {
-        var lines = UnlCore.gridLines(bounds, getCellPrecisions()[cellPrecision]!!)
-        LoadGeoJson(unlMapView, context, lines).execute(lines);
-    } else {
-        this?.getStyle { style ->
+    this.getStyle { style ->
+        if (zoomLevel >= minZoom!! && isVisibleGrids) {
+            style.getLayer(LayerIDs.GRID_LAYER_ID.name)
+                ?.setProperties(PropertyValue("visibility", "visible"))
+            var lines = UnlCore.gridLines(bounds, getCellPrecisions()[cellPrecision]!!)
+            LoadGeoJson(unlMapView, context, lines).execute(lines);
+        } else {
             if (style.layers.size > 0) {
-                style.removeLayer(LayerIDs.GRID_LAYER_ID.name)
-                style.removeSource(SourceIDs.GRID_SOURCE_ID.name)
+                style.getLayer(LayerIDs.GRID_LAYER_ID.name)
+                    ?.setProperties(PropertyValue("visibility", "none"))
             }
         }
     }
@@ -51,7 +53,7 @@ fun MapboxMap?.drawLines(featureCollection: FeatureCollection) {
         this?.getStyle { style ->
             if (featureCollection.features() != null) {
                 if (featureCollection.features()!!.size > 0) {
-                        var src = style.getSource(SourceIDs.GRID_SOURCE_ID.name)
+                    var src = style.getSource(SourceIDs.GRID_SOURCE_ID.name)
                     if (src != null) {
                         (src as GeoJsonSource).setGeoJson(featureCollection)
                     } else {
@@ -72,9 +74,9 @@ fun MapboxMap?.drawLines(featureCollection: FeatureCollection) {
 
 fun UnlMapView.setGridControls(
     context: Context,
-    showGrid: Boolean = false
+    showGrid: Boolean = false,
 ) {
-    if(showGrid) {
+    if (showGrid) {
         var imageView = MapView.inflate(context, R.layout.item_grid_selector, null)
         var imageViewParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT)
