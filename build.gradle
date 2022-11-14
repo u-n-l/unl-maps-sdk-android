@@ -54,9 +54,9 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.github.aamir-unl'
+                groupId = 'com.github.u-n-l'
                 artifactId = 'unl-maps-sdk-android'
-                version = '1.0.0'
+                version = '1.2.0'
             }
         }
     }
