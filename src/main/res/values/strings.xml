@@ -4,4 +4,5 @@
     <string name="traffic_view">https://alpha.studio.unl.global/map_styles_traffic.json</string>
     <string name="terrain_view">https://alpha.studio.unl.global/map_styles_terrain.json</string>
     <string name="base_view">https://alpha.studio.unl.global/map_styles_base.json</string>
+    <string name="choose_grid_size">Choose Grid Size</string>
 </resources>

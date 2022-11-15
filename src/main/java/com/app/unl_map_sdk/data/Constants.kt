@@ -60,34 +60,33 @@ fun getMinGridZoom(cellPrecision: CellPrecision): ZoomLevel {
     }
 }
 
-fun getZoomLevels(): ArrayList<Int> {
-    var zooms = ArrayList<Int>()
-    zooms.add(20)
-    zooms.add(18)
-    zooms.add(16)
-    zooms.add(14)
-    zooms.add(12)
-    zooms.add(10)
-    zooms.add(8)
-    zooms.add(4)
-    zooms.add(3)
-    zooms.add(2)
+fun getZoomLevels(): HashMap<ZoomLevel, Int> {
+    var zooms = HashMap<ZoomLevel,Int>()
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 20
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9] = 18
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_8] = 16
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_7] = 14
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_6] = 12
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5] = 10
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_4] = 8
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_3] = 4
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_2] = 3
+    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_1] = 2
     return zooms
-
 }
 
-fun getCellPrecisions(): ArrayList<Int> {
-    var precisions = ArrayList<Int>()
-    precisions.add(10)
-    precisions.add(9)
-    precisions.add(8)
-    precisions.add(7)
-    precisions.add(6)
-    precisions.add(5)
-    precisions.add(4)
-    precisions.add(3)
-    precisions.add(2)
-    precisions.add(1)
+fun getCellPrecisions():  HashMap<CellPrecision,Int> {
+    var precisions = HashMap<CellPrecision,Int>()
+    precisions[CellPrecision.GEOHASH_LENGTH_10] = 10
+    precisions[CellPrecision.GEOHASH_LENGTH_9] = 9
+    precisions[CellPrecision.GEOHASH_LENGTH_8] = 8
+    precisions[CellPrecision.GEOHASH_LENGTH_7] = 7
+    precisions[CellPrecision.GEOHASH_LENGTH_6] = 6
+    precisions[CellPrecision.GEOHASH_LENGTH_5] = 5
+    precisions[CellPrecision.GEOHASH_LENGTH_4] = 4
+    precisions[CellPrecision.GEOHASH_LENGTH_3] = 3
+    precisions[CellPrecision.GEOHASH_LENGTH_2] = 2
+    precisions[CellPrecision.GEOHASH_LENGTH_1] = 1
     return precisions
 }
 
@@ -115,4 +114,11 @@ enum class CellPrecision {
     GEOHASH_LENGTH_3,
     GEOHASH_LENGTH_2,
     GEOHASH_LENGTH_1
+}
+
+enum class SourceIDs {
+    GRID_SOURCE_ID
+}
+enum class LayerIDs {
+    GRID_LAYER_ID
 }

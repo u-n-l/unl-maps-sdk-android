@@ -1,10 +1,10 @@
-package com.app.unl_map_sdk.helpers
+package com.app.unl_map_sdk.helpers.grid_controls
 
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import androidx.annotation.Nullable
-import com.app.unl_map_sdk.UnlMapView
+import com.app.unl_map_sdk.views.UnlMapView
 import com.app.unl_map_sdk.data.MyFeature
 import com.app.unl_map_sdk.data.Props
 import com.google.gson.Gson
@@ -30,7 +30,7 @@ class LoadGeoJson(
         val data: MutableList<Array<DoubleArray>>? = dataRef.get()
         val map: UnlMapView? = mapRef.get()
         if (activity != null && featureCollection != null) {
-            map?.drawLines(featureCollection)
+            map?.mapbox.drawLines(featureCollection)
         }
     }
 

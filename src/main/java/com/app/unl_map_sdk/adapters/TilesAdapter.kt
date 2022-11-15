@@ -49,7 +49,7 @@ class TilesAdapter(
         }
         if(selectedItem==position){
             holder.itemView.alpha= 1.0F
-            listener.onItemSelected(list!![position])
+            listener.loadStyle(list!![position])
         }else{
             holder.itemView.alpha= 0.5F
         }
@@ -60,6 +60,6 @@ class TilesAdapter(
     }
 
     interface ItemSelectedListener {
-        abstract fun onItemSelected(tileData: TileEnum)
+        abstract fun loadStyle(tileData: TileEnum)
     }
 }
