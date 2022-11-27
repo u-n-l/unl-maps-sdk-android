@@ -2,12 +2,15 @@ package com.app.unl_map_sdk.helpers.grid_controls
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.widget.FrameLayout
 import com.app.unl_map_sdk.R
 import com.app.unl_map_sdk.data.*
 import com.app.unl_map_sdk.views.PrecisionDialog
 import com.app.unl_map_sdk.views.UnlMapView
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.layers.LineLayer
@@ -43,6 +46,9 @@ fun MapboxMap?.loadGrids(
             if (style.layers.size > 0) {
                 style.getLayer(LayerIDs.GRID_LAYER_ID.name)
                     ?.setProperties(PropertyValue("visibility", "none"))
+                style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                    ?.setProperties(PropertyValue("visibility", "none"))
+
             }
         }
     }
@@ -65,7 +71,6 @@ fun MapboxMap?.drawLines(featureCollection: FeatureCollection) {
                                 PropertyFactory.lineWidth(1f),
                                 PropertyFactory.lineColor(Color.parseColor("#C0C0C0"))))
                     }
-
                 }
             }
         }
@@ -88,5 +93,44 @@ fun UnlMapView.setGridControls(
             var frag = PrecisionDialog(this)
             fm.let { frag.show(it!!, "TAG") }
         }
+    }
+}
+
+fun getCell(latLng: LatLng, precision: CellPrecision): GridCell? {
+    var size = getFormattedCellDimensions(precision)
+    return try {
+        var locationId = UnlCore.encode(latLng.latitude, latLng.longitude)
+        GridCell(locationId = locationId, size = size)
+    } catch (e: Exception) {
+        Log.e("ERROR", "location ID not available")
+        null
+    }
+}
+
+fun locationIdToLngLat(locationId: String): LatLng? {
+    return try {
+        var decodedGeohashCoods = UnlCore.decode(locationId).coordinates
+        return LatLng(decodedGeohashCoods.lat, decodedGeohashCoods.lon)
+    } catch (e: Exception) {
+        Log.e("ERROR", "decodedGeohash not available")
+        null
+    }
+}
+
+fun locationIdToBoundsCoordinates(locationId: String): List<List<Point>>? {
+    return try {
+        var unlCoreBounds = UnlCore.bounds(locationId)
+        val POINTS: ArrayList<List<Point>> = ArrayList()
+        val OUTER_POINTS: ArrayList<Point> = ArrayList()
+        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
+        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.s))
+        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.s))
+        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.n))
+        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
+        POINTS.add(OUTER_POINTS)
+        return POINTS
+    } catch (e: Exception) {
+        Log.e("ERROR", "Bounds not available")
+        null
     }
 }
