@@ -20,17 +20,42 @@ import com.app.unl_map_sdk.data.getCellPrecisions
 import com.app.unl_map_sdk.data.getFormattedCellDimensions
 
 
+/**
+ * Precision dialog
+ *
+ * @property listener
+ * @constructor Create empty Precision dialog
+ */
 class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
     var selectedPrecision:CellPrecision?=null
+    companion object{
+        val TAG="PrecisionDialog"
+    }
+
+    /**
+     * On create view
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return inflater.inflate(R.layout.precission_dialog,container,false)
     }
 
+    /**
+     * On view created
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var spinner=view.findViewById<Spinner>(R.id.precisonSpin)
@@ -39,15 +64,30 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
         var btnCancel=view.findViewById<TextView>(R.id.btnCancel)
         var tvHeight=view.findViewById<TextView>(R.id.tvHeight)
         var data=ArrayList<Int>()
+
         getCellPrecisions().values.distinctBy {
             data.add(it)
         }
+
+        /**
+         * [sortedData] is used to store sorted data of [data] Object that contains values of [CellPrecision].
+         */
         var sortedData=data.sorted()
         val adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,sortedData)
         spinner.adapter=adapter
         spinner.setSelection(8)
+
+
         spinner.onItemSelectedListener = object : OnItemSelectedListener {
+            /**
+             * On item selected
+             *
+             * @param parentView
+             * @param selectedItemView
+             * @param position
+             * @param id
+             */
             @RequiresApi(Build.VERSION_CODES.N)
             override fun onItemSelected(
                 parentView: AdapterView<*>?,
@@ -73,10 +113,10 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
             }
         }
         btnCancel.setOnClickListener {
-//            listener.onPrecisionCanceled()
             dismiss()
         }
         btnSelect.setOnClickListener {
+
             if(selectedPrecision!=null){
                 listener.onPrecisionSelected(selectedPrecision!!)
                 dismiss()
@@ -84,8 +124,12 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
         }
     }
 
+    /**
+     * [PrecisionListener] is an *[Interface]* and used as Event Listener for Selection of [CellPrecision].
+     *
+     * @constructor Create empty Precision listener
+     */
     interface PrecisionListener{
         abstract fun onPrecisionSelected(cellPrecision: CellPrecision)
-        abstract fun onPrecisionCanceled()
     }
 }

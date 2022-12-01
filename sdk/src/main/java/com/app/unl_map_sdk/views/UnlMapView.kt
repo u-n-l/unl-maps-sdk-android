@@ -1,18 +1,19 @@
 package com.app.unl_map_sdk.views
 
+import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.unl_map_sdk.R
 import com.app.unl_map_sdk.adapters.TilesAdapter
 import com.app.unl_map_sdk.data.*
 import com.app.unl_map_sdk.helpers.grid_controls.*
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
-import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -22,18 +23,66 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
-
+/**
+ * [UnlMapView] provides an embeddable map interface.
+ * You use this class to display map information and to manipulate the map contents from your application.
+ * You can center the map on a given coordinate, specify the size of the area you want to display,
+ * and style the features of the map to fit your application's use case.
+ *
+ * @constructor
+ *
+ * @param context
+ * @param attrs
+ */
 class UnlMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
-) : MapView(context, attrs), TilesAdapter.ItemSelectedListener, PrecisionDialog.PrecisionListener {
+) : MapView(context, attrs),
+    TilesAdapter.ItemSelectedListener,
+    PrecisionDialog.PrecisionListener {
+    /**
+     * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
+     */
     var clickedLngLat: LatLng? = null
+
+    /**
+     * [tilesRecycler]  is an Instance of Tiles List or we can say TilesRecyclerView.
+     */
     var tilesRecycler: RecyclerView? = null
+
+    /**
+     * [isVisibleTiles] is a Boolean variable which is used to enable/disable TileSelector Visibility and the default Value for this is false.
+     */
     var isVisibleTiles: Boolean = false
+
+    /**
+     * [isVisibleGrids] is a Boolean variable which is used to enable/disable Grid Visibility and the default Value for this is false.
+     */
     var isVisibleGrids: Boolean = false
-    var cellPrecision: CellPrecision? = CellPrecision.GEOHASH_LENGTH_9
+
+    /**
+     * [CellPrecision] is Enum and is for Grid Controls and the default value is 9
+     */
+    var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_9
+
+    /**
+     * Fm is [FragmentManager] and it is to load Grid Control PopUp
+     */
     var fm: FragmentManager? = null
+
+    /**
+     * activity is [Activity] and it is to load Grid Control PopUp
+     */
+    var activity: Activity? = null
+
+    /**
+     * Iv tile is an [ImageView] and is used for enable/disable TileSelector
+     */
     lateinit var ivTile: ImageView
     lateinit var ivArrow: ImageView
+
+    /**
+     * [tileSelectorView] is the Whole Tile Selector Controls to Switch views eg. "SATELLITE VIEW" or "VECTORIAL VIEW" etc
+     */
     var tileSelectorView: View? = null
     lateinit var tileSelectorLayoutParams: LayoutParams
 
@@ -42,55 +91,83 @@ class UnlMapView @JvmOverloads constructor(
     init {
         this.getMapAsync {
             mapbox = it
-            mapbox?.uiSettings?.setAttributionMargins(15, 0, 0, 15)
             mapbox?.uiSettings?.isAttributionEnabled = false
             mapbox?.uiSettings?.isLogoEnabled = false
+            /**
+             * Here we added a Map Camera Idle Listener to recognize whether the user drag offs the screen and then
+             * load Grid on the Map.
+             */
             mapbox?.addOnCameraIdleListener {
-                mapbox?.loadGrids(isVisibleGrids, context, this, cellPrecision!!)
+                mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             }
+            /**
+             * Added A ClickListener to map so we can recognize the click event for cell Selection
+             */
             mapbox?.addOnMapClickListener {
                 mapbox?.getStyle { style ->
+
                     var src = style.getSource(SourceIDs.CELL_SOURCE_ID.name)
-                    var zoomLevel =mapbox?.cameraPosition?.zoom!!
-                    var minZoom = getZoomLevels()[getMinGridZoom(cellPrecision!!)]
-                    if (isVisibleGrids && zoomLevel >= minZoom!!) {
+                    val zoomLevel = mapbox?.cameraPosition?.zoom!!
+                    val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]!!
+                    /**
+                     * Here a condition is placed on the basis of [isVisibleGrids] an [minZoom]
+                     * Because we need to show Cell Selector only if Grid is Visible to user.
+                     */
+                    if (isVisibleGrids && zoomLevel >= minZoom) {
                         var clickedCell =
-                            getCell(it, cellPrecision ?: CellPrecision.GEOHASH_LENGTH_9)
+                            getCell(it, cellPrecision)
                         clickedLngLat = locationIdToLngLat(clickedCell?.locationId ?: "")
+                        /**
+                         * Here the purpose of condition is to check whether there is any source already created or not.
+                         * If already created then we only update the Data for [GeoJsonSource] otherwise we are creating the new [GeoJsonSource]
+                         * for Cell Selection.
+                         */
                         if (src != null) {
-                            src=src as GeoJsonSource
+                            src = src as GeoJsonSource
                             src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
                                 locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
                                     ?: arrayListOf())))
                             style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                                 ?.setProperties(PropertyValue("visibility", "visible"))
                         } else {
+                            /**
+                             * Here we create a new [GeoJsonSource] data to draw [Polygon] on selected Cell
+                             */
                             src =
                                 GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name, Polygon.fromLngLats(
                                     locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
                                         ?: arrayListOf()))
 
                             style.addSource(src)
+                            /**
+                             * Here we create [FillLayer] for Selected cell and add to Style of Map.
+                             * And also provide properties like *FillColor*.
+                             */
                             var fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
                                 SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
-                                Color.parseColor("#3bb2d0")))
+                                ContextCompat.getColor(context,
+                                    R.color.cell_default_color)))
                             style.addLayer(fillLayer)
                         }
                     } else {
+                        /**
+                         * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
+                         */
                         style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                             ?.setProperties(PropertyValue("visibility", "none"))
                     }
                 }
                 isVisibleGrids
             }
-            mapbox?.cameraPosition = CameraPosition.Builder()
-                .target(LatLng(LATITUDE, LONGITUDE))
-                .zoom(ZOOM)
-                .build()
             setGridControls(context)
         }
     }
 
+    /**
+     * Load style is used to load style for [UnlMapView] using [TileEnum].
+     *
+     * @param tileData is an [Enum] and contains values for Map styles.
+     */
     override fun loadStyle(tileData: TileEnum) {
         var url = ""
         when (tileData) {
@@ -110,9 +187,10 @@ class UnlMapView @JvmOverloads constructor(
                 url = Constants.SATELLITE
             }
         }
+
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
-            mapbox?.loadGrids(isVisibleGrids, context, this, cellPrecision!!)
+            mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
                 ivArrow.visibility = GONE
@@ -124,29 +202,15 @@ class UnlMapView @JvmOverloads constructor(
         }
     }
 
-    companion object {
-        private const val LATITUDE = 45.525727
-        private const val LONGITUDE = -122.681125
-        private const val ZOOM = 14.0
-    }
-
+    /**
+     * On precision selected method will be called when we hit the select button in [PrecisionDialog] and
+     * will load Grid according to selected [CellPrecision] value
+     *
+     * @param cellPrecision is selected [CellPrecision] value from [PrecisionDialog]
+     */
     override fun onPrecisionSelected(cellPrecision: CellPrecision) {
         isVisibleGrids = true
         this.cellPrecision = cellPrecision
-        mapbox?.loadGrids(isVisibleGrids, context, this, cellPrecision)
-
+        mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
     }
-
-    override fun onPrecisionCanceled() {
-        isVisibleGrids = false
-        mapbox?.getStyle { style ->
-            if (style.layers.size > 0) {
-                style.removeLayer(LayerIDs.GRID_LAYER_ID.name)
-                style.removeSource(SourceIDs.GRID_SOURCE_ID.name)
-            }
-        }
-    }
-
 }
-
-

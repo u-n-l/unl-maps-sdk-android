@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'maven-publish'
+//    id 'org.jetbrains.dokka'
 }
 
 android {
@@ -33,6 +34,7 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "2.5.1"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -41,6 +43,10 @@ dependencies {
     api ('org.maplibre.gl:android-sdk:9.5.2'){
         exclude group: 'com.google.android.gms'
     }
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    // LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation 'unl:core:1.0.1'
     //Interceptor
     def interceptor = "4.9.0"

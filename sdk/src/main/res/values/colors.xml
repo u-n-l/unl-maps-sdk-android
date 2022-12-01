@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="default_grid_line_color">#C0C0C0</color>
+    <color name="cell_default_color">#3bb2d0</color>
+</resources>

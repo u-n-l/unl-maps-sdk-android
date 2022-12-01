@@ -1,8 +1,15 @@
 package com.app.unl_map_sdk.data
 
 import com.app.unl_map_sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.mapbox.mapboxsdk.style.layers.Layer
+import com.app.unl_map_sdk.UnlMap
 
 object Constants {
+
+    /**
+     * [BASE_URL] is the base url for [UnlMap] Style
+     */
     val BASE_URL = "https://alpha.platform.unl.global/"
     val TERRAIN = "${BASE_URL}map_styles_terrain.json"
     val BASE = "${BASE_URL}map_styles_base.json"
@@ -11,6 +18,12 @@ object Constants {
     val VECTORIAL = "${BASE_URL}map_styles_vectorial.json"
 }
 
+/**
+ * [getFormattedCellDimensions] method is used to get Dimensions of a cell in *GridView_ according to selected [CellPrecision].
+ *
+ * @param cellPrecision is selected [CellPrecision].
+ * @return [String]
+ */
 fun getFormattedCellDimensions(cellPrecision: CellPrecision): String {
     when (cellPrecision) {
         CellPrecision.GEOHASH_LENGTH_1 ->
@@ -35,6 +48,12 @@ fun getFormattedCellDimensions(cellPrecision: CellPrecision): String {
     }
 }
 
+/**
+ * [getMinGridZoom] is used to get Minimum [ZoomLevel] to show *GridView_ according to selected [CellPrecision].
+ *
+ * @param cellPrecision is selected [CellPrecision].
+ * @return [ZoomLevel]
+ */
 fun getMinGridZoom(cellPrecision: CellPrecision): ZoomLevel {
     when (cellPrecision) {
         CellPrecision.GEOHASH_LENGTH_10 ->
@@ -60,6 +79,11 @@ fun getMinGridZoom(cellPrecision: CellPrecision): ZoomLevel {
     }
 }
 
+/**
+ * [getZoomLevels] is method to get Values of [ZoomLevel].
+ *
+ * @return [HashMap]<[ZoomLevel],[Int]>.
+ */
 fun getZoomLevels(): HashMap<ZoomLevel, Int> {
     var zooms = HashMap<ZoomLevel,Int>()
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 20
@@ -75,6 +99,11 @@ fun getZoomLevels(): HashMap<ZoomLevel, Int> {
     return zooms
 }
 
+/**
+ * [getCellPrecisions] is method to get Values of [CellPrecision].
+ *
+ * @return [HashMap]<[CellPrecision],[Int]>.
+ */
 fun getCellPrecisions():  HashMap<CellPrecision,Int> {
     var precisions = HashMap<CellPrecision,Int>()
     precisions[CellPrecision.GEOHASH_LENGTH_10] = 10
@@ -90,6 +119,12 @@ fun getCellPrecisions():  HashMap<CellPrecision,Int> {
     return precisions
 }
 
+
+/**
+ * [ZoomLevel] is an [Enum] for Min Zoom Level for GridView visbility.
+ *
+ * @constructor Create empty Zoom level
+ */
 enum class ZoomLevel {
     MIN_GRID_ZOOM_GEOHASH_LENGTH_10,
     MIN_GRID_ZOOM_GEOHASH_LENGTH_9,
@@ -103,6 +138,11 @@ enum class ZoomLevel {
     MIN_GRID_ZOOM_GEOHASH_LENGTH_1
 }
 
+/**
+ * [CellPrecision] is the [Enum] for Precisions
+ *
+ * @constructor Create empty Cell precision
+ */
 enum class CellPrecision {
     GEOHASH_LENGTH_10,
     GEOHASH_LENGTH_9,
@@ -116,9 +156,32 @@ enum class CellPrecision {
     GEOHASH_LENGTH_1
 }
 
+/**
+ * [SourceIDs] is an [Enum] for [GeoJsonSource] Ids
+ *
+ * @constructor Create empty Source ids
+ */
 enum class SourceIDs {
     GRID_SOURCE_ID,CELL_SOURCE_ID
 }
+/**
+ * [LayerIDs] is an [Enum] for [Layer] Ids.
+ *
+ * @constructor Create empty Source ids.
+ */
 enum class LayerIDs {
     GRID_LAYER_ID,CELL_LAYER_ID
 }
+
+/**
+ * [GRID_ERROR]  is for Logging the Errors of Grid Controls.
+ */
+val GRID_ERROR="GRID_ERROR"
+/**
+ * [TILE_ERROR]  is for Logging the Errors of Tile Controls.
+ */
+val TILE_ERROR="TILE_ERROR"
+/**
+ * [CELL_ERROR]  is for Logging the Errors of Cell Selector.
+ */
+val CELL_ERROR="TILE_ERROR"
