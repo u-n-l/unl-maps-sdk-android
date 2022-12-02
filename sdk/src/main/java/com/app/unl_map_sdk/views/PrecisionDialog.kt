@@ -45,7 +45,6 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return inflater.inflate(R.layout.precission_dialog,container,false)
     }
@@ -116,8 +115,7 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
             dismiss()
         }
         btnSelect.setOnClickListener {
-
-            if(selectedPrecision!=null){
+            if(selectedPrecision!=null) {
                 listener.onPrecisionSelected(selectedPrecision!!)
                 dismiss()
             }

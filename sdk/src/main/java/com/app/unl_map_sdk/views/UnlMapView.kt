@@ -3,6 +3,7 @@ package com.app.unl_map_sdk.views
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.FillLayer
+import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
@@ -123,38 +125,46 @@ class UnlMapView @JvmOverloads constructor(
                          * for Cell Selection.
                          */
                         if (src != null) {
-                            src = src as GeoJsonSource
-                            src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
-                                locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
-                                    ?: arrayListOf())))
-                            style.getLayer(LayerIDs.CELL_LAYER_ID.name)
-                                ?.setProperties(PropertyValue("visibility", "visible"))
-                        } else {
-                            /**
-                             * Here we create a new [GeoJsonSource] data to draw [Polygon] on selected Cell
-                             */
-                            src =
-                                GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name, Polygon.fromLngLats(
+                            try {
+                                src = src as GeoJsonSource
+                                src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
                                     locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
-                                        ?: arrayListOf()))
+                                        ?: arrayListOf())))
+                                style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                                    ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
+                            }catch (e:Exception){
+                                Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
+                            }
+                        } else {
+                           try {
+                               /**
+                                * Here we create a new [GeoJsonSource] data to draw [Polygon] on selected Cell
+                                */
+                               src =
+                                   GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name, Polygon.fromLngLats(
+                                       locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
+                                           ?: arrayListOf()))
 
-                            style.addSource(src)
-                            /**
-                             * Here we create [FillLayer] for Selected cell and add to Style of Map.
-                             * And also provide properties like *FillColor*.
-                             */
-                            var fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
-                                SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
-                                ContextCompat.getColor(context,
-                                    R.color.cell_default_color)))
-                            style.addLayer(fillLayer)
+                               style.addSource(src)
+                               /**
+                                * Here we create [FillLayer] for Selected cell and add to Style of Map.
+                                * And also provide properties like *FillColor*.
+                                */
+                               var fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
+                                   SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
+                                   ContextCompat.getColor(context,
+                                       R.color.cell_default_color)))
+                               style.addLayer(fillLayer)
+                           }catch (e:Exception){
+                               Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
+                           }
                         }
                     } else {
                         /**
                          * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
                          */
                         style.getLayer(LayerIDs.CELL_LAYER_ID.name)
-                            ?.setProperties(PropertyValue("visibility", "none"))
+                            ?.setProperties(PropertyValue(VISIBILITY, Property.NONE))
                     }
                 }
                 isVisibleGrids

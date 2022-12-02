@@ -4,6 +4,7 @@ import com.app.unl_map_sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.mapbox.mapboxsdk.style.layers.Layer
 import com.app.unl_map_sdk.UnlMap
+import com.mapbox.mapboxsdk.style.layers.Property
 
 object Constants {
 
@@ -176,12 +177,29 @@ enum class LayerIDs {
 /**
  * [GRID_ERROR]  is for Logging the Errors of Grid Controls.
  */
-val GRID_ERROR="GRID_ERROR"
+const val GRID_ERROR="GRID_ERROR"
 /**
  * [TILE_ERROR]  is for Logging the Errors of Tile Controls.
  */
-val TILE_ERROR="TILE_ERROR"
+const val TILE_ERROR="TILE_ERROR"
 /**
  * [CELL_ERROR]  is for Logging the Errors of Cell Selector.
  */
-val CELL_ERROR="TILE_ERROR"
+const val CELL_ERROR="CELL_ERROR"
+
+/**
+ * These Constants  is for [SigV4Interceptor] Property name.
+ */
+const val API_KEY="x-unl-api-key"
+const val VPM_ID="x-unl-vpm-id"
+
+/**
+ * These Constants  is for [GeoJsonSource] Property name.
+ */
+const val GRID_PROP_NAME="Grid Lines"
+const val LINE_STRING="LineString"
+const val FEATURE="FEATURE"
+const val VISIBILITY="visibility"
+const val DEFAULT_GRID_LINE_WIDTH=1f
+
+

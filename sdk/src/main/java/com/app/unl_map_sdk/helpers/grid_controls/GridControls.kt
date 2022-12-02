@@ -16,6 +16,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
@@ -79,7 +80,7 @@ fun MapboxMap?.loadGrids(
          */
         if (zoomLevel >= minZoom!! && isVisibleGrids) {
             style.getLayer(LayerIDs.GRID_LAYER_ID.name)
-                ?.setProperties(PropertyValue("visibility", "visible"))
+                ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
 
             /**
              *[UnlCore.gridLines] is an static method in [UnlCore] Lib. and returns the all possible line coordinates shown to user according to selected
@@ -107,10 +108,10 @@ fun MapboxMap?.loadGrids(
                  * And will be formatted in [GeoJsonSource] format.
                  */
                 lines.distinctBy {
-                    val props = Props(name = "Grid Lines")
-                    val geometry = Geometry(type = "LineString", coordinates = it)
+                    val props = Props(name = GRID_PROP_NAME)
+                    val geometry = Geometry(type = LINE_STRING, coordinates = it)
                     val feature =
-                        MyFeature(type = "Feature", properties = props, geometry = geometry)
+                        MyFeature(type = FEATURE, properties = props, geometry = geometry)
                     val dt = Gson().toJson(feature)
                     features.add(Feature.fromJson(dt))
                 }
@@ -137,9 +138,9 @@ fun MapboxMap?.loadGrids(
              */
             if (style.layers.size > 0) {
                 style.getLayer(LayerIDs.GRID_LAYER_ID.name)
-                    ?.setProperties(PropertyValue("visibility", "none"))
+                    ?.setProperties(PropertyValue(VISIBILITY, Property.NONE))
                 style.getLayer(LayerIDs.CELL_LAYER_ID.name)
-                    ?.setProperties(PropertyValue("visibility", "none"))
+                    ?.setProperties(PropertyValue(VISIBILITY, Property.NONE))
 
             }
         }
@@ -187,7 +188,7 @@ fun MapboxMap?.drawLines(featureCollection: FeatureCollection, context: Context)
                     style.addLayer(LineLayer(LayerIDs.GRID_LAYER_ID.name,
                         SourceIDs.GRID_SOURCE_ID.name)
                         .withProperties(
-                            PropertyFactory.lineWidth(1f),
+                            PropertyFactory.lineWidth(DEFAULT_GRID_LINE_WIDTH),
                             PropertyFactory.lineColor(ContextCompat.getColor(context,
                                 R.color.default_grid_line_color))))
                 }

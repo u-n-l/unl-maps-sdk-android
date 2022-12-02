@@ -1,6 +1,8 @@
 package com.app.unl_map_sdk
 
 
+import com.app.unl_map_sdk.data.API_KEY
+import com.app.unl_map_sdk.data.VPM_ID
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -25,8 +27,8 @@ class SigV4Interceptor(var api_key: String, var vpm_id: String) : Interceptor {
          * [Request] Object is used to send data to server like [api_key] and [vpm_id]
          */
         val request = original.newBuilder()
-            .header("x-unl-api-key", api_key)
-            .header("x-unl-vpm-id", vpm_id)
+            .header(API_KEY, api_key)
+            .header(VPM_ID, vpm_id)
             .method(original.method, original.body)
             .build()
 
