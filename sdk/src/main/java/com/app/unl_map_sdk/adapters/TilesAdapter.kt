@@ -20,8 +20,8 @@ import com.app.unl_map_sdk.views.UnlMapView
  * @constructor Create empty Tiles adapter.
  */
 class TilesAdapter(
-    var list: Array<TileEnum>,
-    var listener: ItemSelectedListener,
+    private var list: Array<TileEnum>,
+    private var listener: ItemSelectedListener,
 ) : RecyclerView.Adapter<TilesAdapter.TilesViewHolder>() {
 
     /**
@@ -43,8 +43,8 @@ class TilesAdapter(
      */
     inner class TilesViewHolder(dataBinding: View) :
         RecyclerView.ViewHolder(dataBinding) {
-        lateinit var ivTile: ImageView
-        lateinit var tvTitle: TextView
+        private lateinit var ivTile: ImageView
+        private lateinit var tvTitle: TextView
 
         fun onBind(item: TileEnum) {
             ivTile = itemView.findViewById(R.id.ivTile)
@@ -84,6 +84,6 @@ class TilesAdapter(
      * @constructor Create empty Item selected listener
      */
     interface ItemSelectedListener {
-        abstract fun loadStyle(tileData: TileEnum)
+        fun loadStyle(tileData: TileEnum)
     }
 }

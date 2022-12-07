@@ -26,10 +26,10 @@ import com.app.unl_map_sdk.data.getFormattedCellDimensions
  * @property listener
  * @constructor Create empty Precision dialog
  */
-class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
+class PrecisionDialog(private var listener: PrecisionListener): DialogFragment() {
     var selectedPrecision:CellPrecision?=null
     companion object{
-        val TAG="PrecisionDialog"
+        const val TAG="PrecisionDialog"
     }
 
     /**
@@ -57,21 +57,21 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var spinner=view.findViewById<Spinner>(R.id.precisonSpin)
-        var tvWidth=view.findViewById<TextView>(R.id.tvWidth)
-        var btnSelect=view.findViewById<TextView>(R.id.btnSelect)
-        var btnCancel=view.findViewById<TextView>(R.id.btnCancel)
-        var tvHeight=view.findViewById<TextView>(R.id.tvHeight)
-        var data=ArrayList<Int>()
+        val spinner=view.findViewById<Spinner>(R.id.precisonSpin)
+        val tvWidth=view.findViewById<TextView>(R.id.tvWidth)
+        val btnSelect=view.findViewById<TextView>(R.id.btnSelect)
+        val btnCancel=view.findViewById<TextView>(R.id.btnCancel)
+        val tvHeight=view.findViewById<TextView>(R.id.tvHeight)
+        val data=ArrayList<Int>()
 
         getCellPrecisions().values.distinctBy {
             data.add(it)
         }
 
         /**
-         * [sortedData] is used to store sorted data of [data] Object that contains values of [CellPrecision].
+         * sortedData is used to store sorted data of data Object that contains values of [CellPrecision].
          */
-        var sortedData=data.sorted()
+        val sortedData=data.sorted()
         val adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,sortedData)
         spinner.adapter=adapter
@@ -100,9 +100,9 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
                         selectedPrecision=key
                     }
                 }
-                var dimens= getFormattedCellDimensions(selectedPrecision!!)
-                var width=dimens.split("x")[0]
-                var height=dimens.split("x")[1]
+                val dimens= getFormattedCellDimensions(selectedPrecision!!)
+                val width=dimens.split("x")[0]
+                val height=dimens.split("x")[1]
                 tvWidth.text=width
                 tvHeight.text=height
             }
@@ -123,11 +123,11 @@ class PrecisionDialog(var listener: PrecisionListener): DialogFragment() {
     }
 
     /**
-     * [PrecisionListener] is an *[Interface]* and used as Event Listener for Selection of [CellPrecision].
+     * [PrecisionListener] is an *Interface* and used as Event Listener for Selection of [CellPrecision].
      *
      * @constructor Create empty Precision listener
      */
     interface PrecisionListener{
-        abstract fun onPrecisionSelected(cellPrecision: CellPrecision)
+        fun onPrecisionSelected(cellPrecision: CellPrecision)
     }
 }

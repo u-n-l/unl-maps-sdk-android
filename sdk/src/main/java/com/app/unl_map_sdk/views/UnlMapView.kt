@@ -41,6 +41,7 @@ class UnlMapView @JvmOverloads constructor(
 ) : MapView(context, attrs),
     TilesAdapter.ItemSelectedListener,
     PrecisionDialog.PrecisionListener {
+
     /**
      * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
      */
@@ -62,12 +63,12 @@ class UnlMapView @JvmOverloads constructor(
     var isVisibleGrids: Boolean = false
 
     /**
-     * [CellPrecision] is Enum and is for Grid Controls and the default value is 9
+     * [CellPrecision] is Enum and is for Grid Controls and the default value is 9.
      */
     var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_9
 
     /**
-     * Fm is [FragmentManager] and it is to load Grid Control PopUp
+     * Fm is [FragmentManager] and it is to load Grid Control PopUp.
      */
     var fm: FragmentManager? = null
 
@@ -102,6 +103,7 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.addOnCameraIdleListener {
                 mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             }
+
             /**
              * Added A ClickListener to map so we can recognize the click event for cell Selection
              */
@@ -138,7 +140,7 @@ class UnlMapView @JvmOverloads constructor(
                         } else {
                            try {
                                /**
-                                * Here we create a new [GeoJsonSource] data to draw [Polygon] on selected Cell
+                                * Here we create a new [GeoJsonSource] data to draw [Polygon] for selected Cell
                                 */
                                src =
                                    GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name, Polygon.fromLngLats(

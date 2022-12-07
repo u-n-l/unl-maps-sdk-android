@@ -261,6 +261,7 @@ fun getCell(latLng: LatLng, precision: CellPrecision): GridCell? {
  * @param locationId is used for [UnlCore.decode] method to get [LatLng]
  * @return [LatLng]
  */
+
 fun locationIdToLngLat(locationId: String): LatLng? {
     return try {
         var decodedGeohashCoods = UnlCore.decode(locationId).coordinates
@@ -299,7 +300,7 @@ fun locationIdToBoundsCoordinates(locationId: String): List<List<Point>>? {
 }
 
 /**
- * {CoroutineScope.executeAsyncTask} method is used to create a background Task.
+ * {CoroutineScope.executeAsyncTask} method is used to create a background Task using [CoroutineScope].
  *
  * @param R
  * @param onPreExecute

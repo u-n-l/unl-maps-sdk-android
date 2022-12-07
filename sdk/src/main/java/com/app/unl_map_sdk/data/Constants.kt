@@ -1,22 +1,21 @@
 package com.app.unl_map_sdk.data
 
-import com.app.unl_map_sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import com.mapbox.mapboxsdk.style.layers.Layer
 import com.app.unl_map_sdk.UnlMap
-import com.mapbox.mapboxsdk.style.layers.Property
+import com.app.unl_map_sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
+import com.mapbox.mapboxsdk.style.layers.Layer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
 object Constants {
 
     /**
      * [BASE_URL] is the base url for [UnlMap] Style
      */
-    val BASE_URL = "https://alpha.platform.unl.global/"
-    val TERRAIN = "${BASE_URL}map_styles_terrain.json"
-    val BASE = "${BASE_URL}map_styles_base.json"
-    val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
-    val SATELLITE = "${BASE_URL}map_styles_satellite.json"
-    val VECTORIAL = "${BASE_URL}map_styles_vectorial.json"
+    private const val BASE_URL = "https://alpha.platform.unl.global/"
+    const val TERRAIN = "${BASE_URL}map_styles_terrain.json"
+    const val BASE = "${BASE_URL}map_styles_base.json"
+    const val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
+    const val SATELLITE = "${BASE_URL}map_styles_satellite.json"
+    const val VECTORIAL = "${BASE_URL}map_styles_vectorial.json"
 }
 
 /**
@@ -86,13 +85,13 @@ fun getMinGridZoom(cellPrecision: CellPrecision): ZoomLevel {
  * @return [HashMap]<[ZoomLevel],[Int]>.
  */
 fun getZoomLevels(): HashMap<ZoomLevel, Int> {
-    var zooms = HashMap<ZoomLevel,Int>()
+    val zooms = HashMap<ZoomLevel,Int>()
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10] = 20
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9] = 18
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_8] = 16
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_7] = 14
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_6] = 12
-    zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5] = 10
+    zooms[MIN_GRID_ZOOM_GEOHASH_LENGTH_5] = 10
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_4] = 8
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_3] = 4
     zooms[ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_2] = 3
@@ -106,7 +105,7 @@ fun getZoomLevels(): HashMap<ZoomLevel, Int> {
  * @return [HashMap]<[CellPrecision],[Int]>.
  */
 fun getCellPrecisions():  HashMap<CellPrecision,Int> {
-    var precisions = HashMap<CellPrecision,Int>()
+    val precisions = HashMap<CellPrecision,Int>()
     precisions[CellPrecision.GEOHASH_LENGTH_10] = 10
     precisions[CellPrecision.GEOHASH_LENGTH_9] = 9
     precisions[CellPrecision.GEOHASH_LENGTH_8] = 8
@@ -122,7 +121,7 @@ fun getCellPrecisions():  HashMap<CellPrecision,Int> {
 
 
 /**
- * [ZoomLevel] is an [Enum] for Min Zoom Level for GridView visbility.
+ * [ZoomLevel] is an [Enum] for Min Zoom Level for GridView visibility.
  *
  * @constructor Create empty Zoom level
  */
@@ -188,7 +187,7 @@ const val TILE_ERROR="TILE_ERROR"
 const val CELL_ERROR="CELL_ERROR"
 
 /**
- * These Constants  is for [SigV4Interceptor] Property name.
+ * These Constants  is for SigV4Interceptor Property name.
  */
 const val API_KEY="x-unl-api-key"
 const val VPM_ID="x-unl-vpm-id"
