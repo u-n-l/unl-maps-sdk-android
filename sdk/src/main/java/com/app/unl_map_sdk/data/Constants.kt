@@ -117,8 +117,8 @@ enum class CellPrecision {
 }
 
 enum class SourceIDs {
-    GRID_SOURCE_ID
+    GRID_SOURCE_ID,CELL_SOURCE_ID
 }
 enum class LayerIDs {
-    GRID_LAYER_ID
+    GRID_LAYER_ID,CELL_LAYER_ID
 }
