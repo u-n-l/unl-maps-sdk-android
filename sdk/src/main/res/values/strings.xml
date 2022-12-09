@@ -5,4 +5,10 @@
     <string name="terrain_view">https://alpha.studio.unl.global/map_styles_terrain.json</string>
     <string name="base_view">https://alpha.studio.unl.global/map_styles_base.json</string>
     <string name="choose_grid_size">Choose Grid Size</string>
+    <string name="vectorial">Vectorial</string>
+    <string name="geohash_length">GeoHash length</string>
+    <string name="cell_width">Cell Width</string>
+    <string name="cell_height">Cell Height</string>
+    <string name="cancel">Cancel</string>
+    <string name="select">Select</string>
 </resources>
