@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.views
+package com.unl.map.sdk.views
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,9 +15,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.data.CellPrecision
-import com.app.unl_map_sdk.data.getCellPrecisions
-import com.app.unl_map_sdk.data.getFormattedCellDimensions
+import com.unl.map.sdk.data.CellPrecision
+import com.unl.map.sdk.data.getCellPrecisions
+import com.unl.map.sdk.data.getFormattedCellDimensions
 
 
 /**
@@ -27,7 +27,7 @@ import com.app.unl_map_sdk.data.getFormattedCellDimensions
  * @constructor Create empty Precision dialog
  */
 class PrecisionDialog(private var listener: PrecisionListener): DialogFragment() {
-    var selectedPrecision:CellPrecision?=null
+    var selectedPrecision: CellPrecision?=null
     companion object{
         const val TAG="PrecisionDialog"
     }
@@ -50,10 +50,27 @@ class PrecisionDialog(private var listener: PrecisionListener): DialogFragment()
     }
 
     /**
-     * On view created
+     * Called to have the fragment instantiate its user interface view.
+     * This is optional, and non-graphical fragments can return null. This will be called between
+     * {@link #onCreate(Bundle)} and {@link #onViewCreated(View, Bundle)}.
+     * <p>A default View can be returned by calling {@link #Fragment(int)} in your
+     * constructor. Otherwise, this method returns null.
      *
-     * @param view
-     * @param savedInstanceState
+     * <p>It is recommended to <strong>only</strong> inflate the layout in this method and move
+     * logic that operates on the returned View to {@link #onViewCreated(View, Bundle)}.
+     *
+     * <p>If you return a View from here, you will later be called in
+     * {@link #onDestroyView} when the view is being released.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Return the View for the fragment's UI, or null.
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,8 +1,8 @@
-package com.app.unl_map_sdk
+package com.unl.map.sdk
 
 
-import com.app.unl_map_sdk.data.API_KEY
-import com.app.unl_map_sdk.data.VPM_ID
+import com.unl.map.sdk.data.API_KEY
+import com.unl.map.sdk.data.VPM_ID
 import okhttp3.Interceptor
 import okhttp3.Response
 

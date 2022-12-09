@@ -1,13 +1,10 @@
-package com.app.unl_map_sdk.helpers.grid_controls
+package com.unl.map.sdk.helpers.grid_controls
 
 import android.content.Context
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.data.*
-import com.app.unl_map_sdk.views.PrecisionDialog
-import com.app.unl_map_sdk.views.UnlMapView
 import com.google.gson.Gson
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -20,6 +17,9 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.unl.map.sdk.data.*
+import com.unl.map.sdk.views.PrecisionDialog
+import com.unl.map.sdk.views.UnlMapView
 import kotlinx.coroutines.*
 import unl.core.Bounds
 import unl.core.UnlCore
@@ -230,7 +230,7 @@ fun UnlMapView.setGridControls(
          * */
         imageView.setOnClickListener {
             var frag = PrecisionDialog(this)
-            fm.let { frag.show(it!!, PrecisionDialog.TAG) }
+            fm.let { frag.show(it!!, com.unl.map.sdk.views.PrecisionDialog.TAG) }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.data
+package com.unl.map.sdk.data
 
 import unl.core.UnlCore
 

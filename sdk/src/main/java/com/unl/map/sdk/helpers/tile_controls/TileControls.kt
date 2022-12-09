@@ -1,14 +1,12 @@
-package com.app.unl_map_sdk.helpers.tile_controls
+package com.unl.map.sdk.helpers.tile_controls
 
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.view.contains
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.adapters.TilesAdapter
-import com.app.unl_map_sdk.data.TILE_ERROR
-import com.app.unl_map_sdk.data.TileEnum
-import com.app.unl_map_sdk.views.UnlMapView
 import com.mapbox.mapboxsdk.maps.MapView
+import com.unl.map.sdk.adapters.TilesAdapter
+import com.unl.map.sdk.views.UnlMapView
 
 /**
  * [enableTileSelector] method is an Extension method for [UnlMapView] to enable/disable TileSelector Controls.
@@ -23,7 +21,7 @@ fun UnlMapView.enableTileSelector(
     tilesRecycler = tileSelectorView?.findViewById(R.id.recyclerView)
     ivTile = tileSelectorView?.findViewById(R.id.ivTile)!!
     ivArrow = tileSelectorView?.findViewById(R.id.imageView)!!
-    tilesRecycler?.adapter = TilesAdapter(TileEnum.values(), this)
+    tilesRecycler?.adapter = TilesAdapter(com.unl.map.sdk.data.TileEnum.values(), this)
     tileSelectorLayoutParams =
         FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT)
@@ -37,7 +35,7 @@ fun UnlMapView.enableTileSelector(
     } else {
         if (contains(tileSelectorView!!))
             removeView(tileSelectorView)
-        loadStyle(TileEnum.TERRAIN)
+        loadStyle(com.unl.map.sdk.data.TileEnum.TERRAIN)
     }
     /**
      * This is click Event Listener for Tile selector.
@@ -74,6 +72,6 @@ fun UnlMapView.setTileSelectorGravity(gravity: Int) {
         tileSelectorLayoutParams.gravity = gravity
         tileSelectorView?.layoutParams = tileSelectorLayoutParams
     } else {
-        Log.e(TILE_ERROR, "Tile Selector View is not created Yet!")
+        Log.e(com.unl.map.sdk.data.TILE_ERROR, "Tile Selector View is not created Yet!")
     }
 }

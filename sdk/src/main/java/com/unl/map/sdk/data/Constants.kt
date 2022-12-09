@@ -1,9 +1,9 @@
-package com.app.unl_map_sdk.data
+package com.unl.map.sdk.data
 
-import com.app.unl_map_sdk.UnlMap
-import com.app.unl_map_sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
 import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.unl.map.sdk.UnlMap
+import com.unl.map.sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
 
 object Constants {
 

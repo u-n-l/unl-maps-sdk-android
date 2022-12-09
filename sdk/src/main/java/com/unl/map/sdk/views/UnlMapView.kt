@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.views
+package com.unl.map.sdk.views
 
 import android.app.Activity
 import android.content.Context
@@ -10,9 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.adapters.TilesAdapter
-import com.app.unl_map_sdk.data.*
-import com.app.unl_map_sdk.helpers.grid_controls.*
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -24,6 +21,9 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.unl.map.sdk.adapters.TilesAdapter
+import com.unl.map.sdk.data.*
+import com.unl.map.sdk.helpers.grid_controls.*
 
 /**
  * [UnlMapView] provides an embeddable map interface.

@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.data
+package com.unl.map.sdk.data
 
 /**
  * [TileEnum] is used to store [Enum] of Tiles or styles for our Map.
