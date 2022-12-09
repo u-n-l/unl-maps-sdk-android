@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/ivTile"
-        android:text="Vectorial"
+        android:text="@string/vectorial"
         android:textSize="8sp"
         android:textColor="#000000"
         app:layout_constraintStart_toStartOf="@+id/ivTile"
