@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
-import com.app.unl_map_sdk.R
 import com.google.gson.Gson
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -17,6 +16,7 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.unl.map.R
 import com.unl.map.sdk.data.*
 import com.unl.map.sdk.views.PrecisionDialog
 import com.unl.map.sdk.views.UnlMapView
@@ -33,6 +33,7 @@ import unl.core.UnlCore
  * @param unlMapView UnlMapView is used for instance of [UnlMapView].
  * @param cellPrecision CellPrecision is used to get GridLines from [UnlCore] Lib.
  */
+@OptIn(DelicateCoroutinesApi::class)
 fun MapboxMap?.loadGrids(
     isVisibleGrids: Boolean,
     unlMapView: UnlMapView,
@@ -42,23 +43,23 @@ fun MapboxMap?.loadGrids(
     /**
      * [latLngBounds] is used to store Map's current Visible [Bounds].
      */
-    var latLngBounds = this?.projection?.visibleRegion?.latLngBounds
+    val latLngBounds = this?.projection?.visibleRegion?.latLngBounds
 
     /**
      * [mapBoundsWidth] is used to store the width of Visible portion of Map.
      */
-    var mapBoundsWidth = latLngBounds?.northEast?.longitude!! - latLngBounds.southWest.longitude
+    val mapBoundsWidth = latLngBounds?.northEast?.longitude!! - latLngBounds.southWest.longitude
 
     /**
      * [mapBoundsHeight] is used to store the height of Visible portion of Map.
      */
-    var mapBoundsHeight = latLngBounds.northEast.latitude - latLngBounds.southWest.latitude
+    val mapBoundsHeight = latLngBounds.northEast.latitude - latLngBounds.southWest.latitude
 
     /**
      * [bounds] is used to store the Map's Visible region with extra boundaries
      * Here we add 4 more Map bounds to current visible bounds as per height and width of the Map.
      */
-    var bounds = Bounds(latLngBounds.latNorth + mapBoundsWidth,
+    val bounds = Bounds(latLngBounds.latNorth + mapBoundsWidth,
         latLngBounds.lonEast + mapBoundsHeight,
         latLngBounds.latSouth - mapBoundsWidth,
         latLngBounds.lonWest - mapBoundsHeight)
@@ -66,12 +67,12 @@ fun MapboxMap?.loadGrids(
     /**
      * [zoomLevel] is used to store Map's current zoom Level.
      */
-    var zoomLevel = this?.cameraPosition?.zoom!!
+    val zoomLevel = this?.cameraPosition?.zoom!!
 
     /**
      * [minZoom] is use to store Minimum Zoom Level to show GridLines.
      */
-    var minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]
+    val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]
     this.getStyle { style ->
         /**
          * Here we have used a conditional constraint to check whether ZoomLevel of my Map is Greater or equal to Minimum Zoom to show Grid
@@ -86,7 +87,7 @@ fun MapboxMap?.loadGrids(
              *[UnlCore.gridLines] is an static method in [UnlCore] Lib. and returns the all possible line coordinates shown to user according to selected
              * [CellPrecision] and Map [Bounds].
              */
-            var lines = UnlCore.gridLines(bounds, getCellPrecisions()[cellPrecision]!!)
+            val lines = UnlCore.gridLines(bounds, getCellPrecisions()[cellPrecision]!!)
             /**
              *[GlobalScope.executeAsyncTask] helps us to convert GridLines to [GeoJsonSource] in background Task.
              */
@@ -168,7 +169,7 @@ fun MapboxMap?.drawLines(featureCollection: FeatureCollection, context: Context)
                 /**
                  * Src IS [GeoJsonSource] Object for Grid Data.
                  */
-                var src = style.getSource(SourceIDs.GRID_SOURCE_ID.name)
+                val src = style.getSource(SourceIDs.GRID_SOURCE_ID.name)
                 /**
                  * Here the purpose of this condition is to check whether a Grid is already created or not
                  * if created then update the data only if not then we will create in else statement.
@@ -216,8 +217,8 @@ fun UnlMapView.setGridControls(
      * Here the purpose of this condition is to check whether a user need the GridControls on the Map or not.
      * */
     if (showGrid) {
-        var imageView = MapView.inflate(context, R.layout.item_grid_selector, null)
-        var imageViewParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+        val imageView = MapView.inflate(context, R.layout.item_grid_selector, null)
+        val imageViewParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT)
         /**
          * Here the purpose of this static Int values is to set the margins for our GridController Button.
@@ -229,7 +230,7 @@ fun UnlMapView.setGridControls(
          * Use of Click Event Listener is to show [PrecisionDialog] to user so user can selected the [CellPrecision].
          * */
         imageView.setOnClickListener {
-            var frag = PrecisionDialog(this)
+            val frag = PrecisionDialog(this)
             fm.let { frag.show(it!!, com.unl.map.sdk.views.PrecisionDialog.TAG) }
         }
     }
@@ -245,9 +246,9 @@ fun UnlMapView.setGridControls(
  */
 
 fun getCell(latLng: LatLng, precision: CellPrecision): GridCell? {
-    var size = getFormattedCellDimensions(precision)
+    val size = getFormattedCellDimensions(precision)
     return try {
-        var locationId = UnlCore.encode(latLng.latitude, latLng.longitude)
+        val locationId = UnlCore.encode(latLng.latitude, latLng.longitude)
         GridCell(locationId = locationId, size = size)
     } catch (e: Exception) {
         Log.e(CELL_ERROR, "location ID not available")
@@ -264,7 +265,7 @@ fun getCell(latLng: LatLng, precision: CellPrecision): GridCell? {
 
 fun locationIdToLngLat(locationId: String): LatLng? {
     return try {
-        var decodedGeohashCoods = UnlCore.decode(locationId).coordinates
+        val decodedGeohashCoods = UnlCore.decode(locationId).coordinates
         return LatLng(decodedGeohashCoods.lat, decodedGeohashCoods.lon)
     } catch (e: Exception) {
         Log.e(CELL_ERROR, "decodedGeohash not available")
@@ -283,16 +284,16 @@ fun locationIdToLngLat(locationId: String): LatLng? {
  */
 fun locationIdToBoundsCoordinates(locationId: String): List<List<Point>>? {
     return try {
-        var unlCoreBounds = UnlCore.bounds(locationId)
-        val POINTS: ArrayList<List<Point>> = ArrayList()
-        val OUTER_POINTS: ArrayList<Point> = ArrayList()
-        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
-        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.s))
-        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.s))
-        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.n))
-        OUTER_POINTS.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
-        POINTS.add(OUTER_POINTS)
-        return POINTS
+        val unlCoreBounds = UnlCore.bounds(locationId)
+        val points: ArrayList<List<Point>> = ArrayList()
+        val outerPoints: ArrayList<Point> = ArrayList()
+        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
+        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.s))
+        outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.s))
+        outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.n))
+        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
+        points.add(outerPoints)
+        return points
     } catch (e: Exception) {
         Log.e(CELL_ERROR, "Bounds not available")
         null

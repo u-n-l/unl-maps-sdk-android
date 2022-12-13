@@ -3,8 +3,8 @@ package com.unl.map.sdk.helpers.tile_controls
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.view.contains
-import com.app.unl_map_sdk.R
 import com.mapbox.mapboxsdk.maps.MapView
+import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.views.UnlMapView
 

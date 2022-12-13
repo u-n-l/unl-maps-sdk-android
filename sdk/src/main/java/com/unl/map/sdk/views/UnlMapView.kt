@@ -9,7 +9,6 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.unl_map_sdk.R
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -21,6 +20,7 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
 import com.unl.map.sdk.helpers.grid_controls.*
@@ -118,7 +118,7 @@ class UnlMapView @JvmOverloads constructor(
                      * Because we need to show Cell Selector only if Grid is Visible to user.
                      */
                     if (isVisibleGrids && zoomLevel >= minZoom) {
-                        var clickedCell =
+                        val clickedCell =
                             getCell(it, cellPrecision)
                         clickedLngLat = locationIdToLngLat(clickedCell?.locationId ?: "")
                         /**
@@ -134,32 +134,34 @@ class UnlMapView @JvmOverloads constructor(
                                         ?: arrayListOf())))
                                 style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                                     ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
-                            }catch (e:Exception){
+                            } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
                             }
                         } else {
-                           try {
-                               /**
-                                * Here we create a new [GeoJsonSource] data to draw [Polygon] for selected Cell
-                                */
-                               src =
-                                   GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name, Polygon.fromLngLats(
-                                       locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
-                                           ?: arrayListOf()))
+                            try {
+                                /**
+                                 * Here we create a new [GeoJsonSource] data to draw [Polygon] for selected Cell
+                                 */
+                                src =
+                                    GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name,
+                                        Polygon.fromLngLats(
+                                            locationIdToBoundsCoordinates(clickedCell?.locationId
+                                                ?: "")
+                                                ?: arrayListOf()))
 
-                               style.addSource(src)
-                               /**
-                                * Here we create [FillLayer] for Selected cell and add to Style of Map.
-                                * And also provide properties like *FillColor*.
-                                */
-                               var fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
-                                   SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
-                                   ContextCompat.getColor(context,
-                                       R.color.cell_default_color)))
-                               style.addLayer(fillLayer)
-                           }catch (e:Exception){
-                               Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
-                           }
+                                style.addSource(src)
+                                /**
+                                 * Here we create [FillLayer] for Selected cell and add to Style of Map.
+                                 * And also provide properties like *FillColor*.
+                                 */
+                                val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
+                                    SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
+                                    ContextCompat.getColor(context,
+                                        R.color.cell_default_color)))
+                                style.addLayer(fillLayer)
+                            } catch (e: Exception) {
+                                Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
+                            }
                         }
                     } else {
                         /**
