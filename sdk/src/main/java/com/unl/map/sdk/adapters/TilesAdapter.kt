@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.adapters
+package com.unl.map.sdk.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.unl_map_sdk.R
-import com.app.unl_map_sdk.data.TileEnum
-import com.app.unl_map_sdk.views.UnlMapView
+import com.unl.map.sdk.data.TileEnum
+import com.unl.map.sdk.views.UnlMapView
 
 /**
  * Tiles adapter is Adapter for Tiles [RecyclerView] and is used to show list of Tiles for [UnlMapView].

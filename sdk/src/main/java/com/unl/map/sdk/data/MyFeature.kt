@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.data
+package com.unl.map.sdk.data
 
 /**
  * [MyFeature] is an [KotlinData] Class to store data Related to GeoJsonSource like [Geometry], Properties and Type..

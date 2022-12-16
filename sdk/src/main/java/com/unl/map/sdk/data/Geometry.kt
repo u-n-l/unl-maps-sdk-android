@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk.data
+package com.unl.map.sdk.data
 
 /**
  * [Geometry] is an KotlinData Class to store data Related to GeoJsonSource like coordinates and type of [Geometry].

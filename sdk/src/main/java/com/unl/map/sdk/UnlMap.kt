@@ -1,4 +1,4 @@
-package com.app.unl_map_sdk
+package com.unl.map.sdk
 
 import android.content.Context
 import com.mapbox.mapboxsdk.Mapbox
