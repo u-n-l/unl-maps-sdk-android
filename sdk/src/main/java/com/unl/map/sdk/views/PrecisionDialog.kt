@@ -14,7 +14,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
-import com.app.unl_map_sdk.R
+import com.unl.map.R
 import com.unl.map.sdk.data.CellPrecision
 import com.unl.map.sdk.data.getCellPrecisions
 import com.unl.map.sdk.data.getFormattedCellDimensions
