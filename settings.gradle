@@ -16,7 +16,7 @@ dependencyResolutionManagement {
             url = uri("https://maven.pkg.github.com/u-n-l/core-java")
             credentials {
                 username = "aamir-unl"
-                password = "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"
+                password = "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"
             }
         }
     }
