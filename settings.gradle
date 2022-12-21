@@ -10,12 +10,15 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+     Properties properties = new Properties()
+    properties.load(new File(rootDir.absolutePath + "/local.properties").newDataInputStream())
+    def keyAccess = properties.getProperty('ACCESS_TOKEN', null)
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/u-n-l/core-java")
             credentials {
                 username = "aamir-unl"
-                password = "ACCESS_TOKEN"
+                password = keyAccess
             }
         }
     }
