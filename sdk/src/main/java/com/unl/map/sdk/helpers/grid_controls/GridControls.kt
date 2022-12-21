@@ -1,7 +1,12 @@
 package com.unl.map.sdk.helpers.grid_controls
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.Log
+import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
@@ -23,6 +28,7 @@ import com.unl.map.sdk.views.UnlMapView
 import kotlinx.coroutines.*
 import unl.core.Bounds
 import unl.core.UnlCore
+
 
 /**
  * [loadGrids] is an Extension method which helps us to get Grid Lines from [UnlCore] Lib.
@@ -321,4 +327,21 @@ fun <R> CoroutineScope.executeAsyncTask(
         doInBackground() // runs in background thread without blocking the Main Thread
     }
     onPostExecute(result) // runs in Main Thread
+}
+
+fun View.getBitmapFromView(): Bitmap? {
+    //Define a bitmap with the same size as the view
+    val returnedBitmap =
+        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    //Bind a canvas to it
+    val canvas = Canvas(returnedBitmap)
+    //Get the view's background
+    val bgDrawable: Drawable = background
+    if (bgDrawable != null) //has background drawable, then draw it on the canvas
+        bgDrawable.draw(canvas) else  //does not have background drawable, then draw white background on the canvas
+        canvas.drawColor(Color.WHITE)
+    // draw the view on the canvas
+    draw(canvas)
+    //return the bitmap
+    return returnedBitmap
 }

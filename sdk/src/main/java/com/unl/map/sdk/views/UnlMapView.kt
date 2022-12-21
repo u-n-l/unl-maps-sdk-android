@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -15,15 +16,17 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.FillLayer
 import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
 import com.unl.map.sdk.helpers.grid_controls.*
+
 
 /**
  * [UnlMapView] provides an embeddable map interface.
@@ -41,7 +44,6 @@ class UnlMapView @JvmOverloads constructor(
 ) : MapView(context, attrs),
     TilesAdapter.ItemSelectedListener,
     PrecisionDialog.PrecisionListener {
-
     /**
      * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
      */
@@ -90,7 +92,6 @@ class UnlMapView @JvmOverloads constructor(
     lateinit var tileSelectorLayoutParams: LayoutParams
 
     var mapbox: MapboxMap? = null
-
     init {
         this.getMapAsync {
             mapbox = it
@@ -157,7 +158,7 @@ class UnlMapView @JvmOverloads constructor(
                                 val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
                                     SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
                                     ContextCompat.getColor(context,
-                                        R.color.cell_default_color)))
+                                        com.unl.map.R.color.cell_default_color)))
                                 style.addLayer(fillLayer)
                             } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
@@ -204,6 +205,7 @@ class UnlMapView @JvmOverloads constructor(
 
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
+//            addSymbolAnnotation(it)
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
@@ -227,4 +229,34 @@ class UnlMapView @JvmOverloads constructor(
         this.cellPrecision = cellPrecision
         mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
     }
+
+    private fun addSymbolAnnotation(style: Style) {
+
+        // Add icon to the style
+        addAirplaneImageToStyle(style)
+        // Create a SymbolManager.
+        val symbolManager = SymbolManager(this, mapbox!!, style)
+        // Set non-data-driven properties.
+        symbolManager.iconAllowOverlap = true
+        symbolManager.iconIgnorePlacement = true
+        // Create a symbol at the specified location.
+        val symbolOptions = SymbolOptions()
+            .withLatLng(LatLng(30.7120452, 76.8144185))
+            .withIconImage("airport")
+            .withIconSize(1.3f)
+
+        // Use the manager to draw the annotations.
+        symbolManager.create(symbolOptions)
+
+    }
+    private fun addAirplaneImageToStyle(style: Style) {
+        val factory = LayoutInflater.from(context)
+        val myView: View = factory.inflate(com.unl.map.R.layout.item_cell_label, null)
+        style.addImage(
+            "airport",
+            myView.getBitmapFromView()!!,
+            true
+        )
+    }
+
 }

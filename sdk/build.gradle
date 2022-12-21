@@ -43,6 +43,7 @@ dependencies {
     api ('org.maplibre.gl:android-sdk:9.5.2'){
         exclude group: 'com.google.android.gms'
     }
+    implementation 'org.maplibre.gl:android-plugin-annotation-v9:1.0.0'
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     // LiveData
