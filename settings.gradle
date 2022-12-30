@@ -10,12 +10,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/u-n-l/core-java")
             credentials {
                 username = "aamir-unl"
-                password = "ACCESS_TOKEN"
+                password = SECRET1+SECRET2
             }
         }
     }

@@ -10,7 +10,7 @@ object Constants {
     /**
      * [BASE_URL] is the base url for [UnlMap] Style
      */
-    private const val BASE_URL = "https://alpha.platform.unl.global/"
+    private const val BASE_URL = "https://platform.unl.global/"
     const val TERRAIN = "${BASE_URL}map_styles_terrain.json"
     const val BASE = "${BASE_URL}map_styles_base.json"
     const val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
@@ -170,7 +170,7 @@ enum class SourceIDs {
  * @constructor Create empty Source ids.
  */
 enum class LayerIDs {
-    GRID_LAYER_ID,CELL_LAYER_ID
+    GRID_LAYER_ID,CELL_LAYER_ID,CELL_POP_LAYER_ID
 }
 
 /**
@@ -200,5 +200,8 @@ const val LINE_STRING="LineString"
 const val FEATURE="FEATURE"
 const val VISIBILITY="visibility"
 const val DEFAULT_GRID_LINE_WIDTH=1f
+const val DEFAULT_ZOOM_LEVEL=14.0
+const val MAX_ZOOM_LEVEL=20.0
+const val MIN_ZOOM_LEVEL=2.0
 
 

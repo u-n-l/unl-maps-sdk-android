@@ -4,7 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.Drawable
+import android.graphics.Paint
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
@@ -80,6 +83,7 @@ fun MapboxMap?.loadGrids(
      */
     val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]
     this.getStyle { style ->
+
         /**
          * Here we have used a conditional constraint to check whether ZoomLevel of my Map is Greater or equal to Minimum Zoom to show Grid
          *
@@ -329,18 +333,18 @@ fun <R> CoroutineScope.executeAsyncTask(
     onPostExecute(result) // runs in Main Thread
 }
 
-fun View.getBitmapFromView(): Bitmap? {
+fun View.getBitmapFromView(text:String): Bitmap? {
     //Define a bitmap with the same size as the view
     val returnedBitmap =
-        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        Bitmap.createBitmap(100, 50, Bitmap.Config.ARGB_8888)
     //Bind a canvas to it
+
     val canvas = Canvas(returnedBitmap)
-    //Get the view's background
-    val bgDrawable: Drawable = background
-    if (bgDrawable != null) //has background drawable, then draw it on the canvas
-        bgDrawable.draw(canvas) else  //does not have background drawable, then draw white background on the canvas
-        canvas.drawColor(Color.WHITE)
-    // draw the view on the canvas
+    val paint = Paint()
+    canvas.drawPaint(paint)
+    paint.color = Color.WHITE
+    paint.textSize = 16F
+    canvas.drawText("My Text", android.R.attr.x.toFloat(), android.R.attr.y.toFloat(), paint)
     draw(canvas)
     //return the bitmap
     return returnedBitmap

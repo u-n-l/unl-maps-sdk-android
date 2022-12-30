@@ -12,16 +12,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
+import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
-import com.mapbox.mapboxsdk.style.layers.FillLayer
-import com.mapbox.mapboxsdk.style.layers.Property
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyValue
+import com.mapbox.mapboxsdk.style.layers.*
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
@@ -67,7 +65,7 @@ class UnlMapView @JvmOverloads constructor(
     /**
      * [CellPrecision] is Enum and is for Grid Controls and the default value is 9.
      */
-    var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_9
+    var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_7
 
     /**
      * Fm is [FragmentManager] and it is to load Grid Control PopUp.
@@ -92,11 +90,16 @@ class UnlMapView @JvmOverloads constructor(
     lateinit var tileSelectorLayoutParams: LayoutParams
 
     var mapbox: MapboxMap? = null
+
     init {
         this.getMapAsync {
             mapbox = it
+
             mapbox?.uiSettings?.isAttributionEnabled = false
             mapbox?.uiSettings?.isLogoEnabled = false
+            mapbox?.cameraPosition = CameraPosition.Builder().zoom(DEFAULT_ZOOM_LEVEL).build()
+            mapbox?.setMaxZoomPreference(MAX_ZOOM_LEVEL)
+            mapbox?.setMinZoomPreference(MIN_ZOOM_LEVEL)
             /**
              * Here we added a Map Camera Idle Listener to recognize whether the user drag offs the screen and then
              * load Grid on the Map.
@@ -104,6 +107,7 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.addOnCameraIdleListener {
                 mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             }
+
 
             /**
              * Added A ClickListener to map so we can recognize the click event for cell Selection
@@ -133,8 +137,9 @@ class UnlMapView @JvmOverloads constructor(
                                 src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
                                     locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
                                         ?: arrayListOf())))
-                                style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                              style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                                     ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
+
                             } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
                             }
@@ -164,6 +169,11 @@ class UnlMapView @JvmOverloads constructor(
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
                             }
                         }
+                       if(style.getLayer(LayerIDs.CELL_POP_LAYER_ID.name)==null){
+//                           val symbolLayer = SymbolLayer(LayerIDs.CELL_POP_LAYER_ID.name, SourceIDs.CELL_SOURCE_ID.name)
+//                               .withProperties(PropertyFactory.textField("Hello World This is Test"))
+//                           style.addLayer(symbolLayer)
+                       }
                     } else {
                         /**
                          * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
@@ -231,7 +241,9 @@ class UnlMapView @JvmOverloads constructor(
     }
 
     private fun addSymbolAnnotation(style: Style) {
-
+//        val symbolLayer = SymbolLayer("layer-id", "source-id")
+//            .withProperties(PropertyFactory.textField(Expression.get("FEATURE-PROPERTY-KEY")))
+//        style.addLayer(symbolLayer)
         // Add icon to the style
         addAirplaneImageToStyle(style)
         // Create a SymbolManager.
@@ -247,16 +259,15 @@ class UnlMapView @JvmOverloads constructor(
 
         // Use the manager to draw the annotations.
         symbolManager.create(symbolOptions)
-
     }
+
     private fun addAirplaneImageToStyle(style: Style) {
         val factory = LayoutInflater.from(context)
         val myView: View = factory.inflate(com.unl.map.R.layout.item_cell_label, null)
         style.addImage(
             "airport",
-            myView.getBitmapFromView()!!,
-            true
+            myView.getBitmapFromView("#has10122")!!,
+            false
         )
     }
-
 }
