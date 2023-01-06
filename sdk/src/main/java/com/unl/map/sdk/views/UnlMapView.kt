@@ -2,9 +2,9 @@ package com.unl.map.sdk.views
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -65,10 +65,10 @@ class UnlMapView @JvmOverloads constructor(
     /**
      * [CellPrecision] is Enum and is for Grid Controls and the default value is 9.
      */
-    var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_7
+    var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_9
 
     /**
-     * Fm is [FragmentManager] and it is to load Grid Control PopUp.
+     * Fm is [FragmentManager] and it is used to load Grid Control PopUp.
      */
     var fm: FragmentManager? = null
 
@@ -137,7 +137,7 @@ class UnlMapView @JvmOverloads constructor(
                                 src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
                                     locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
                                         ?: arrayListOf())))
-                              style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                                style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                                     ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
 
                             } catch (e: Exception) {
@@ -169,11 +169,7 @@ class UnlMapView @JvmOverloads constructor(
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
                             }
                         }
-                       if(style.getLayer(LayerIDs.CELL_POP_LAYER_ID.name)==null){
-//                           val symbolLayer = SymbolLayer(LayerIDs.CELL_POP_LAYER_ID.name, SourceIDs.CELL_SOURCE_ID.name)
-//                               .withProperties(PropertyFactory.textField("Hello World This is Test"))
-//                           style.addLayer(symbolLayer)
-                       }
+                        addSymbolAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
                     } else {
                         /**
                          * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
@@ -215,7 +211,6 @@ class UnlMapView @JvmOverloads constructor(
 
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
-//            addSymbolAnnotation(it)
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
@@ -240,12 +235,12 @@ class UnlMapView @JvmOverloads constructor(
         mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
     }
 
-    private fun addSymbolAnnotation(style: Style) {
-//        val symbolLayer = SymbolLayer("layer-id", "source-id")
-//            .withProperties(PropertyFactory.textField(Expression.get("FEATURE-PROPERTY-KEY")))
-//        style.addLayer(symbolLayer)
+    private fun addSymbolAnnotation(style: Style, latLng: LatLng, locationId: String) {
         // Add icon to the style
-        addAirplaneImageToStyle(style)
+        latLng.latitude = latLng.latitude + LOCATION_POP_MARGIN
+
+        var isRemoved = addAirplaneImageToStyle(style, locationId)
+
         // Create a SymbolManager.
         val symbolManager = SymbolManager(this, mapbox!!, style)
         // Set non-data-driven properties.
@@ -253,21 +248,27 @@ class UnlMapView @JvmOverloads constructor(
         symbolManager.iconIgnorePlacement = true
         // Create a symbol at the specified location.
         val symbolOptions = SymbolOptions()
-            .withLatLng(LatLng(30.7120452, 76.8144185))
-            .withIconImage("airport")
-            .withIconSize(1.3f)
+            .withLatLng(latLng)
+            .withIconImage(LayerIDs.CELL_POP_LAYER_ID.name)
+            .withIconSize(LOCATION_POP_SIZE)
 
         // Use the manager to draw the annotations.
         symbolManager.create(symbolOptions)
+
+
     }
 
-    private fun addAirplaneImageToStyle(style: Style) {
-        val factory = LayoutInflater.from(context)
-        val myView: View = factory.inflate(com.unl.map.R.layout.item_cell_label, null)
-        style.addImage(
-            "airport",
-            myView.getBitmapFromView("#has10122")!!,
+    private fun addAirplaneImageToStyle(style: Style, locationId: String): Boolean {
+        return if (style.getImage(LayerIDs.CELL_POP_LAYER_ID.name) != null) {
+            style.removeImage(LayerIDs.CELL_POP_LAYER_ID.name)
+            true
+        } else {
+            style.addImage(
+                LayerIDs.CELL_POP_LAYER_ID.name,
+                textAsBitmap(locationId, LOCATION_POP_TEXT_SIZE, Color.BLACK)!!,
+                false
+            )
             false
-        )
+        }
     }
 }

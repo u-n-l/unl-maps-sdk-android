@@ -1,16 +1,15 @@
 package com.unl.map.sdk.helpers.grid_controls
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.text.Layout
+import android.graphics.*
+import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.os.Build
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.mapbox.geojson.Feature
@@ -19,6 +18,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.style.expressions.Expression.image
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
@@ -240,7 +240,7 @@ fun UnlMapView.setGridControls(
          * Use of Click Event Listener is to show [PrecisionDialog] to user so user can selected the [CellPrecision].
          * */
         imageView.setOnClickListener {
-            val frag = PrecisionDialog(this)
+            val frag = PrecisionDialog(this,cellPrecision)
             fm.let { frag.show(it!!, com.unl.map.sdk.views.PrecisionDialog.TAG) }
         }
     }
@@ -301,7 +301,7 @@ fun locationIdToBoundsCoordinates(locationId: String): List<List<Point>>? {
         outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.s))
         outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.s))
         outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.n))
-        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
+//        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
         points.add(outerPoints)
         return points
     } catch (e: Exception) {
@@ -333,19 +333,27 @@ fun <R> CoroutineScope.executeAsyncTask(
     onPostExecute(result) // runs in Main Thread
 }
 
-fun View.getBitmapFromView(text:String): Bitmap? {
-    //Define a bitmap with the same size as the view
-    val returnedBitmap =
-        Bitmap.createBitmap(100, 50, Bitmap.Config.ARGB_8888)
-    //Bind a canvas to it
-
-    val canvas = Canvas(returnedBitmap)
-    val paint = Paint()
-    canvas.drawPaint(paint)
-    paint.color = Color.WHITE
-    paint.textSize = 16F
-    canvas.drawText("My Text", android.R.attr.x.toFloat(), android.R.attr.y.toFloat(), paint)
-    draw(canvas)
-    //return the bitmap
-    return returnedBitmap
+fun textAsBitmap(text: String?, textSize: Float, textColor: Int): Bitmap? {
+    // adapted from https://stackoverflow.com/a/8799344/1476989
+    val paint = Paint(ANTI_ALIAS_FLAG)
+    paint.textSize = textSize
+    paint.color = textColor
+    paint.textAlign = Paint.Align.LEFT
+    val baseline = -paint.ascent() // ascent() is negative
+    val width = (paint.measureText(text)).toInt() // round
+    val height = (baseline + paint.descent()).toInt()
+    val trueWidth = width
+//    if (width > height) height = width else width = height
+    val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(image)
+    canvas.drawText(text!!, (width / 2 - trueWidth / 2).toFloat(), baseline, paint)
+    return image.changeBackgroundColor(Color.WHITE)
+}
+fun Bitmap.changeBackgroundColor(color: Int): Bitmap {
+    val newBitmap = Bitmap.createBitmap(width+40, height+20, config)
+    val canvas = Canvas(newBitmap)
+    canvas.drawColor(color)
+    canvas.drawBitmap(this, 0F, 0F, null)
+    recycle()
+    return newBitmap
 }
