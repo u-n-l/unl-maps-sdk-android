@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
@@ -24,6 +25,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
 import com.unl.map.sdk.helpers.grid_controls.*
+import com.unl.map.sdk.networks.UnlViewModel
 
 
 /**
@@ -42,6 +44,9 @@ class UnlMapView @JvmOverloads constructor(
 ) : MapView(context, attrs),
     TilesAdapter.ItemSelectedListener,
     PrecisionDialog.PrecisionListener {
+
+    var lifeCycleOwner: ViewModelStoreOwner?=null
+    lateinit var viewModel: UnlViewModel
     /**
      * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
      */
@@ -169,7 +174,7 @@ class UnlMapView @JvmOverloads constructor(
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
                             }
                         }
-                        addSymbolAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
+                        addLabelAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
                     } else {
                         /**
                          * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
@@ -212,6 +217,7 @@ class UnlMapView @JvmOverloads constructor(
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
+
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
                 ivArrow.visibility = GONE
@@ -235,11 +241,11 @@ class UnlMapView @JvmOverloads constructor(
         mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
     }
 
-    private fun addSymbolAnnotation(style: Style, latLng: LatLng, locationId: String) {
+    private fun addLabelAnnotation(style: Style, latLng: LatLng, locationId: String) {
         // Add icon to the style
         latLng.latitude = latLng.latitude + LOCATION_POP_MARGIN
 
-        var isRemoved = addAirplaneImageToStyle(style, locationId)
+         addLabelImageToStyle(style, locationId)
 
         // Create a SymbolManager.
         val symbolManager = SymbolManager(this, mapbox!!, style)
@@ -258,7 +264,7 @@ class UnlMapView @JvmOverloads constructor(
 
     }
 
-    private fun addAirplaneImageToStyle(style: Style, locationId: String): Boolean {
+    private fun addLabelImageToStyle(style: Style, locationId: String): Boolean {
         return if (style.getImage(LayerIDs.CELL_POP_LAYER_ID.name) != null) {
             style.removeImage(LayerIDs.CELL_POP_LAYER_ID.name)
             true
