@@ -8,7 +8,7 @@ interface UnlMapApi {
     companion object {
 
         //GET
-        const val INDOOR_MAP_DATA = "v1/projects/{projectId}/records"
+        const val INDOOR_MAP_DATA = "projects/{projectId}/records"
 
     }
 

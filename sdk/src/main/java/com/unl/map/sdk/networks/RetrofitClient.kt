@@ -2,6 +2,7 @@ package com.unl.map.sdk.networks
 
 
  import com.google.gson.GsonBuilder
+ import com.unl.map.sdk.UnlMap
  import okhttp3.Interceptor
  import okhttp3.OkHttpClient
  import okhttp3.logging.HttpLoggingInterceptor
@@ -20,7 +21,7 @@ object RetrofitClient {
 
     private val LOGGING_INTERCEPTOR by lazy {
         HttpLoggingInterceptor().setLevel(
-                HttpLoggingInterceptor.Level.BODY
+                HttpLoggingInterceptor.Level.BASIC
         )
     }
 
@@ -29,6 +30,7 @@ object RetrofitClient {
             val original = chain.request()
             val request = original.newBuilder()
                 .addHeader("Accept", "application/json")
+                .addHeader("x-unl-api-key", "6xU02LavUnxuf25hUoKYbWqxGdxJCnJw")
                 .build()
             chain.proceed(request)
         }

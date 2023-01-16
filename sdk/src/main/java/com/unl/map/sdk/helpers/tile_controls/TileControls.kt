@@ -20,7 +20,7 @@ fun UnlMapView.enableTileSelector(
     boolean: Boolean = false,
 ) {
     viewModel = ViewModelProvider(lifeCycleOwner!!)[UnlViewModel::class.java]
-
+    viewModel.getIndoorMapData("953aa382-cae9-4225-95ea-33e88f0fd2bb")
     tileSelectorView = MapView.inflate(context, R.layout.layout_tile_selector, null)
     tilesRecycler = tileSelectorView?.findViewById(R.id.recyclerView)
     ivTile = tileSelectorView?.findViewById(R.id.ivTile)!!
