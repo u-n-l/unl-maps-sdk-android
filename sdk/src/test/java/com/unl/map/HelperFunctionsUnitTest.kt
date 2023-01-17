@@ -1,11 +1,11 @@
 package com.unl.map
 
-import com.unl.map.sdk.helpers.grid_controls.getCell
-import com.unl.map.sdk.helpers.grid_controls.locationIdToBoundsCoordinates
-import com.unl.map.sdk.helpers.grid_controls.locationIdToLngLat
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.unl.map.sdk.data.*
+import com.unl.map.sdk.helpers.grid_controls.getCell
+import com.unl.map.sdk.helpers.grid_controls.locationIdToBoundsCoordinates
+import com.unl.map.sdk.helpers.grid_controls.locationIdToLngLat
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

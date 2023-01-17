@@ -26,7 +26,7 @@ import com.unl.map.sdk.data.getFormattedCellDimensions
  * @property listener
  * @constructor Create empty Precision dialog
  */
-class PrecisionDialog(private var listener: PrecisionListener): DialogFragment() {
+class PrecisionDialog(private var listener: PrecisionListener, var cellPrecision: CellPrecision): DialogFragment() {
     var selectedPrecision: CellPrecision?=null
     companion object{
         const val TAG="PrecisionDialog"
@@ -92,7 +92,7 @@ class PrecisionDialog(private var listener: PrecisionListener): DialogFragment()
         val adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,sortedData)
         spinner.adapter=adapter
-        spinner.setSelection(8)
+        spinner.setSelection(getCellPrecisions()[cellPrecision]!!-1)
 
 
         spinner.onItemSelectedListener = object : OnItemSelectedListener {
