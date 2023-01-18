@@ -1,6 +1,7 @@
 package com.unl.map.sdk.helpers.grid_controls
 
 import android.content.Context
+import android.graphics.*
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
@@ -23,6 +24,7 @@ import com.unl.map.sdk.views.UnlMapView
 import kotlinx.coroutines.*
 import unl.core.Bounds
 import unl.core.UnlCore
+
 
 /**
  * [loadGrids] is an Extension method which helps us to get Grid Lines from [UnlCore] Lib.
@@ -74,6 +76,7 @@ fun MapboxMap?.loadGrids(
      */
     val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]
     this.getStyle { style ->
+
         /**
          * Here we have used a conditional constraint to check whether ZoomLevel of my Map is Greater or equal to Minimum Zoom to show Grid
          *
@@ -230,7 +233,7 @@ fun UnlMapView.setGridControls(
          * Use of Click Event Listener is to show [PrecisionDialog] to user so user can selected the [CellPrecision].
          * */
         imageView.setOnClickListener {
-            val frag = PrecisionDialog(this)
+            val frag = PrecisionDialog(this,cellPrecision)
             fm.let { frag.show(it!!, com.unl.map.sdk.views.PrecisionDialog.TAG) }
         }
     }
@@ -291,7 +294,6 @@ fun locationIdToBoundsCoordinates(locationId: String): List<List<Point>>? {
         outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.s))
         outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.s))
         outerPoints.add(Point.fromLngLat(unlCoreBounds.e, unlCoreBounds.n))
-        outerPoints.add(Point.fromLngLat(unlCoreBounds.w, unlCoreBounds.n))
         points.add(outerPoints)
         return points
     } catch (e: Exception) {
