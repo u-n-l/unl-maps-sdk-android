@@ -19,34 +19,6 @@ dependencies {
 }
 ```
 
-### Add Maven URLs
-```
-    allprojects {
-	repositories {
-             ....
-             maven { url 'https://jitpack.io' }
-               
-             maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/u-n-l/core-java")
-                credentials {
-                    username = <YOUR_USERNAME>
-                    password = <YOUR_PASSWORD>
-                }
-            }
-            .....
-        }
-    }
-```
-
-
-### Enable AndroidX by adding following in `gradle.properties`.
-```
-android.useAndroidX=true
-android.enableJetifier=true
-```
-
-
 ## Permissons
 Add the following permissions to your `AndroidManifest.xml` file:
 ```
