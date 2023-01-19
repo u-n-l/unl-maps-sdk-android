@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.app.unl_map_sdk.R
+import com.unl.map.R
 import com.unl.map.sdk.data.TileEnum
 import com.unl.map.sdk.views.UnlMapView
 

@@ -1,5 +1,9 @@
 package com.unl.map.sdk.data
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.unl.map.sdk.UnlMap
@@ -10,7 +14,7 @@ object Constants {
     /**
      * [BASE_URL] is the base url for [UnlMap] Style
      */
-    private const val BASE_URL = "https://alpha.platform.unl.global/"
+    private const val BASE_URL = "https://platform.unl.global/"
     const val TERRAIN = "${BASE_URL}map_styles_terrain.json"
     const val BASE = "${BASE_URL}map_styles_base.json"
     const val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
@@ -156,6 +160,31 @@ enum class CellPrecision {
     GEOHASH_LENGTH_1
 }
 
+fun textAsBitmap(text: String?, textSize: Float, textColor: Int): Bitmap? {
+    // adapted from https://stackoverflow.com/a/8799344/1476989
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    paint.textSize = textSize
+    paint.color = textColor
+    paint.textAlign = Paint.Align.LEFT
+    val baseline = -paint.ascent() // ascent() is negative
+    val width = (paint.measureText(text)).toInt() // round
+    val height = (baseline + paint.descent()).toInt()
+    val trueWidth = width
+//    if (width > height) height = width else width = height
+    val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(image)
+    canvas.drawText(text!!, (width / 2 - trueWidth / 2).toFloat(), baseline, paint)
+    return image.changeBackgroundColor(Color.WHITE)
+}
+fun Bitmap.changeBackgroundColor(color: Int): Bitmap {
+    val newBitmap = Bitmap.createBitmap(width+40, height+20, config)
+    val canvas = Canvas(newBitmap)
+    canvas.drawColor(color)
+    canvas.drawBitmap(this, 0F, 0F, null)
+    recycle()
+    return newBitmap
+}
+
 /**
  * [SourceIDs] is an [Enum] for [GeoJsonSource] Ids
  *
@@ -170,7 +199,7 @@ enum class SourceIDs {
  * @constructor Create empty Source ids.
  */
 enum class LayerIDs {
-    GRID_LAYER_ID,CELL_LAYER_ID
+    GRID_LAYER_ID,CELL_LAYER_ID,CELL_POP_LAYER_ID
 }
 
 /**
@@ -185,6 +214,7 @@ const val TILE_ERROR="TILE_ERROR"
  * [CELL_ERROR]  is for Logging the Errors of Cell Selector.
  */
 const val CELL_ERROR="CELL_ERROR"
+const val API_ERROR="API_ERROR"
 
 /**
  * These Constants  is for SigV4Interceptor Property name.
@@ -200,5 +230,11 @@ const val LINE_STRING="LineString"
 const val FEATURE="FEATURE"
 const val VISIBILITY="visibility"
 const val DEFAULT_GRID_LINE_WIDTH=1f
+const val DEFAULT_ZOOM_LEVEL=14.0
+const val MAX_ZOOM_LEVEL=20.0
+const val MIN_ZOOM_LEVEL=2.0
+const val LOCATION_POP_SIZE=1.3f
+const val LOCATION_POP_TEXT_SIZE=40F
+const val LOCATION_POP_MARGIN=0.000030
 
 
