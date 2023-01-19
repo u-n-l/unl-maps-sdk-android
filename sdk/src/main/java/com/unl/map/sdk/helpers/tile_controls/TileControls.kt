@@ -3,9 +3,11 @@ package com.unl.map.sdk.helpers.tile_controls
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.view.contains
+import androidx.lifecycle.ViewModelProvider
 import com.mapbox.mapboxsdk.maps.MapView
 import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
+import com.unl.map.sdk.networks.UnlViewModel
 import com.unl.map.sdk.views.UnlMapView
 
 /**
@@ -17,6 +19,8 @@ import com.unl.map.sdk.views.UnlMapView
 fun UnlMapView.enableTileSelector(
     boolean: Boolean = false,
 ) {
+    viewModel = ViewModelProvider(lifeCycleOwner!!)[UnlViewModel::class.java]
+    viewModel.getIndoorMapData("953aa382-cae9-4225-95ea-33e88f0fd2bb")
     tileSelectorView = MapView.inflate(context, R.layout.layout_tile_selector, null)
     tilesRecycler = tileSelectorView?.findViewById(R.id.recyclerView)
     ivTile = tileSelectorView?.findViewById(R.id.ivTile)!!
