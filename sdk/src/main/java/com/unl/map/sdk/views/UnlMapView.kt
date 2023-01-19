@@ -2,28 +2,31 @@ package com.unl.map.sdk.views
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Polygon
+import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.style.layers.FillLayer
-import com.mapbox.mapboxsdk.style.layers.Property
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyValue
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.layers.*
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
 import com.unl.map.sdk.helpers.grid_controls.*
+import com.unl.map.sdk.networks.UnlViewModel
+
 
 /**
  * [UnlMapView] provides an embeddable map interface.
@@ -42,6 +45,8 @@ class UnlMapView @JvmOverloads constructor(
     TilesAdapter.ItemSelectedListener,
     PrecisionDialog.PrecisionListener {
 
+    var lifeCycleOwner: ViewModelStoreOwner?=null
+    lateinit var viewModel: UnlViewModel
     /**
      * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
      */
@@ -68,7 +73,7 @@ class UnlMapView @JvmOverloads constructor(
     var cellPrecision: CellPrecision = CellPrecision.GEOHASH_LENGTH_9
 
     /**
-     * Fm is [FragmentManager] and it is to load Grid Control PopUp.
+     * Fm is [FragmentManager] and it is used to load Grid Control PopUp.
      */
     var fm: FragmentManager? = null
 
@@ -94,8 +99,12 @@ class UnlMapView @JvmOverloads constructor(
     init {
         this.getMapAsync {
             mapbox = it
+
             mapbox?.uiSettings?.isAttributionEnabled = false
             mapbox?.uiSettings?.isLogoEnabled = false
+            mapbox?.cameraPosition = CameraPosition.Builder().zoom(DEFAULT_ZOOM_LEVEL).build()
+            mapbox?.setMaxZoomPreference(MAX_ZOOM_LEVEL)
+            mapbox?.setMinZoomPreference(MIN_ZOOM_LEVEL)
             /**
              * Here we added a Map Camera Idle Listener to recognize whether the user drag offs the screen and then
              * load Grid on the Map.
@@ -103,6 +112,7 @@ class UnlMapView @JvmOverloads constructor(
             mapbox?.addOnCameraIdleListener {
                 mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
             }
+
 
             /**
              * Added A ClickListener to map so we can recognize the click event for cell Selection
@@ -134,6 +144,7 @@ class UnlMapView @JvmOverloads constructor(
                                         ?: arrayListOf())))
                                 style.getLayer(LayerIDs.CELL_LAYER_ID.name)
                                     ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
+
                             } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
                             }
@@ -157,12 +168,13 @@ class UnlMapView @JvmOverloads constructor(
                                 val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
                                     SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
                                     ContextCompat.getColor(context,
-                                        R.color.cell_default_color)))
+                                        com.unl.map.R.color.cell_default_color)))
                                 style.addLayer(fillLayer)
                             } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
                             }
                         }
+                        addLabelAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
                     } else {
                         /**
                          * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
@@ -205,6 +217,7 @@ class UnlMapView @JvmOverloads constructor(
         mapbox?.setStyle(Style.Builder()
             .fromUri(url)) {
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
+
             if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
                 ivArrow.visibility = GONE
@@ -226,5 +239,42 @@ class UnlMapView @JvmOverloads constructor(
         isVisibleGrids = true
         this.cellPrecision = cellPrecision
         mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
+    }
+
+    private fun addLabelAnnotation(style: Style, latLng: LatLng, locationId: String) {
+        // Add icon to the style
+        latLng.latitude = latLng.latitude + LOCATION_POP_MARGIN
+
+         addLabelImageToStyle(style, locationId)
+
+        // Create a SymbolManager.
+        val symbolManager = SymbolManager(this, mapbox!!, style)
+        // Set non-data-driven properties.
+        symbolManager.iconAllowOverlap = true
+        symbolManager.iconIgnorePlacement = true
+        // Create a symbol at the specified location.
+        val symbolOptions = SymbolOptions()
+            .withLatLng(latLng)
+            .withIconImage(LayerIDs.CELL_POP_LAYER_ID.name)
+            .withIconSize(LOCATION_POP_SIZE)
+
+        // Use the manager to draw the annotations.
+        symbolManager.create(symbolOptions)
+
+
+    }
+
+    private fun addLabelImageToStyle(style: Style, locationId: String): Boolean {
+        return if (style.getImage(LayerIDs.CELL_POP_LAYER_ID.name) != null) {
+            style.removeImage(LayerIDs.CELL_POP_LAYER_ID.name)
+            true
+        } else {
+            style.addImage(
+                LayerIDs.CELL_POP_LAYER_ID.name,
+                textAsBitmap(locationId, LOCATION_POP_TEXT_SIZE, Color.BLACK)!!,
+                false
+            )
+            false
+        }
     }
 }

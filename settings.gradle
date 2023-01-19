@@ -5,18 +5,18 @@ pluginManagement {
         mavenCentral()
     }
 }
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/u-n-l/core-java")
             credentials {
                 username = "aamir-unl"
-                password = "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"
+                password = AUTH_TOKEN_1+AUTH_TOKEN_2
             }
         }
     }
