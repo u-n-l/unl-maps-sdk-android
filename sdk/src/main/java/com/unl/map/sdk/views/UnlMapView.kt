@@ -9,23 +9,38 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.expressions.Expression
+import com.mapbox.mapboxsdk.style.expressions.Expression.*
 import com.mapbox.mapboxsdk.style.layers.*
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.mapbox.mapboxsdk.utils.BitmapUtils
+import com.unl.map.R
 import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.data.*
+import com.unl.map.sdk.data.indoor_data.Item
 import com.unl.map.sdk.helpers.grid_controls.*
 import com.unl.map.sdk.networks.UnlViewModel
+import com.unl.map.sdk.prefs.DataManager
+import java.net.URI
+import java.net.URISyntaxException
 
 
 /**
@@ -45,12 +60,14 @@ class UnlMapView @JvmOverloads constructor(
     TilesAdapter.ItemSelectedListener,
     PrecisionDialog.PrecisionListener {
 
+     var enableIndoorMap: Boolean=false
+    var viewLifecycle: LifecycleOwner?=null
     var lifeCycleOwner: ViewModelStoreOwner?=null
     lateinit var viewModel: UnlViewModel
     /**
      * [clickedLngLat]  is used to store the [LatLng] of selected Cell from the Grid.
      */
-    var clickedLngLat: LatLng? = null
+    private var clickedLngLat: LatLng? = null
 
     /**
      * [tilesRecycler]  is an Instance of Tiles List or we can say TilesRecyclerView.
@@ -65,7 +82,7 @@ class UnlMapView @JvmOverloads constructor(
     /**
      * [isVisibleGrids] is a Boolean variable which is used to enable/disable Grid Visibility and the default Value for this is false.
      */
-    var isVisibleGrids: Boolean = false
+    private var isVisibleGrids: Boolean = false
 
     /**
      * [CellPrecision] is Enum and is for Grid Controls and the default value is 9.
@@ -102,7 +119,8 @@ class UnlMapView @JvmOverloads constructor(
 
             mapbox?.uiSettings?.isAttributionEnabled = false
             mapbox?.uiSettings?.isLogoEnabled = false
-            mapbox?.cameraPosition = CameraPosition.Builder().zoom(DEFAULT_ZOOM_LEVEL).build()
+            mapbox?.cameraPosition = CameraPosition.Builder().zoom(DEFAULT_ZOOM_LEVEL).target(LatLng(52.54973517,13.38957081)).build()
+
             mapbox?.setMaxZoomPreference(MAX_ZOOM_LEVEL)
             mapbox?.setMinZoomPreference(MIN_ZOOM_LEVEL)
             /**
@@ -124,7 +142,7 @@ class UnlMapView @JvmOverloads constructor(
                     val zoomLevel = mapbox?.cameraPosition?.zoom!!
                     val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]!!
                     /**
-                     * Here a condition is placed on the basis of [isVisibleGrids] an [minZoom]
+                     * Here a condition is placed on the basis of [isVisibleGrids] an minZoom
                      * Because we need to show Cell Selector only if Grid is Visible to user.
                      */
                     if (isVisibleGrids && zoomLevel >= minZoom) {
@@ -168,7 +186,7 @@ class UnlMapView @JvmOverloads constructor(
                                 val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
                                     SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
                                     ContextCompat.getColor(context,
-                                        com.unl.map.R.color.cell_default_color)))
+                                        R.color.cell_default_color)))
                                 style.addLayer(fillLayer)
                             } catch (e: Exception) {
                                 Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
@@ -187,6 +205,66 @@ class UnlMapView @JvmOverloads constructor(
             }
             setGridControls(context)
         }
+    }
+
+     fun addDataObserver() {
+        viewModel.indoorMapData.observe(viewLifecycle!!) { it ->
+            if(it!=null){
+                val style=mapbox?.style
+                Log.e(API_DATA,Gson().toJson(it))
+                val features = ArrayList<Feature>()
+                it.items.distinctBy {
+                    val feature =Feature.fromJson(Gson().toJson(it.geojson))
+                    features.add(feature)
+                }
+                val featureCollection: FeatureCollection = FeatureCollection.fromFeatures(features)
+                if (!featureCollection.features().isNullOrEmpty()) {
+
+                    val src = style?.getSource(SourceIDs.INDOOR_SOURCE_ID.name)
+                   if(src!=null){
+
+                   }else{
+                       style?.addSource(GeoJsonSource(SourceIDs.INDOOR_SOURCE_ID.name,
+                           featureCollection))
+                       style?.addLayer(FillLayer(LayerIDs.INDOOR_LAYER_ID.name,
+                           SourceIDs.INDOOR_SOURCE_ID.name)
+                           .withProperties(
+                               PropertyFactory.fillColor(ContextCompat.getColor(context,
+                                   R.color.cell_default_color))))
+                   }
+                }
+                it.items.distinctBy {
+                    style?.addImage(
+                        it.recordId,
+                        context.getDrawable(R.drawable.ic_baseline_place_24)?.convertDrawableToBitmap()!!,
+                        false
+                    )
+                    val symbolManager = SymbolManager(this, mapbox!!, style!!)
+                    // Set non-data-driven properties.
+                    symbolManager.iconAllowOverlap = true
+                    symbolManager.iconIgnorePlacement = true
+                    symbolManager.addClickListener(OnSymbolClickListener { _->
+                        loadRecord(it)
+                        true
+                    })
+                    // Create a symbol at the specified location.
+                    val symbolOptions = SymbolOptions()
+                        .withLatLng(LatLng(it.latitude,it.longitude))
+                        .withIconImage(it.recordId)
+                        .withIconSize(INDOOR_ICON_SIZE)
+
+                    // Use the manager to draw the annotations.
+                    symbolManager.create(symbolOptions)
+                }
+            }
+        }
+         viewModel.singleIndoorMapData.observe(viewLifecycle!!) { it ->
+             Log.e(API_DATA, Gson().toJson(it))
+         }
+     }
+
+    private fun loadRecord(it: Item) {
+        viewModel.getSingleIndoorMapData(DataManager.getVpmId()?:"",it.venueId)
     }
 
     /**

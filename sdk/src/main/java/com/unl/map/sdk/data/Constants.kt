@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.unl.map.sdk.UnlMap
@@ -14,7 +16,12 @@ object Constants {
     /**
      * [BASE_URL] is the base url for [UnlMap] Style
      */
+
     private const val BASE_URL = "https://platform.unl.global/"
+  // private const val BASE_URL =   "https://sandbox.platform.unl.global/"
+
+
+
     const val TERRAIN = "${BASE_URL}map_styles_terrain.json"
     const val BASE = "${BASE_URL}map_styles_base.json"
     const val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
@@ -176,6 +183,25 @@ fun textAsBitmap(text: String?, textSize: Float, textColor: Int): Bitmap? {
     canvas.drawText(text!!, (width / 2 - trueWidth / 2).toFloat(), baseline, paint)
     return image.changeBackgroundColor(Color.WHITE)
 }
+ fun Drawable.convertDrawableToBitmap(): Bitmap? {
+    if (this == null) {
+        return null
+    }
+    return if (this is BitmapDrawable) {
+        this.bitmap
+    } else {
+        val constantState = this.constantState ?: return null
+        val drawable = constantState.newDrawable().mutate()
+        val bitmap: Bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth, drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        bitmap
+    }
+}
 fun Bitmap.changeBackgroundColor(color: Int): Bitmap {
     val newBitmap = Bitmap.createBitmap(width+40, height+20, config)
     val canvas = Canvas(newBitmap)
@@ -191,7 +217,7 @@ fun Bitmap.changeBackgroundColor(color: Int): Bitmap {
  * @constructor Create empty Source ids
  */
 enum class SourceIDs {
-    GRID_SOURCE_ID,CELL_SOURCE_ID
+    GRID_SOURCE_ID,CELL_SOURCE_ID,INDOOR_SOURCE_ID
 }
 /**
  * [LayerIDs] is an [Enum] for [Layer] Ids.
@@ -199,7 +225,7 @@ enum class SourceIDs {
  * @constructor Create empty Source ids.
  */
 enum class LayerIDs {
-    GRID_LAYER_ID,CELL_LAYER_ID,CELL_POP_LAYER_ID
+    GRID_LAYER_ID,CELL_LAYER_ID,CELL_POP_LAYER_ID,INDOOR_LAYER_ID
 }
 
 /**
@@ -215,12 +241,13 @@ const val TILE_ERROR="TILE_ERROR"
  */
 const val CELL_ERROR="CELL_ERROR"
 const val API_ERROR="API_ERROR"
+const val API_DATA="API_DATA"
 
 /**
  * These Constants  is for SigV4Interceptor Property name.
  */
 const val API_KEY="x-unl-api-key"
-const val VPM_ID="x-unl-vpm-id"
+    const val VPM_ID="x-unl-vpm-id"
 
 /**
  * These Constants  is for [GeoJsonSource] Property name.
@@ -234,6 +261,7 @@ const val DEFAULT_ZOOM_LEVEL=14.0
 const val MAX_ZOOM_LEVEL=20.0
 const val MIN_ZOOM_LEVEL=2.0
 const val LOCATION_POP_SIZE=1.3f
+const val INDOOR_ICON_SIZE=1.3f
 const val LOCATION_POP_TEXT_SIZE=40F
 const val LOCATION_POP_MARGIN=0.000030
 

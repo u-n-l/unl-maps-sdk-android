@@ -3,6 +3,8 @@ package com.unl.map.sdk.networks
 
  import com.google.gson.GsonBuilder
  import com.unl.map.sdk.UnlMap
+ import com.unl.map.sdk.data.API_KEY
+ import com.unl.map.sdk.prefs.DataManager
  import okhttp3.Interceptor
  import okhttp3.OkHttpClient
  import okhttp3.logging.HttpLoggingInterceptor
@@ -13,6 +15,7 @@ package com.unl.map.sdk.networks
 
 object RetrofitClient {
     var BASE_URL = "https://api.unl.global/v1/"  //version 1
+   // var BASE_URL = "https://sandbox.api.unl.global/v1/"  //version 1
 
 
     val unlMapApi: UnlMapApi by lazy {
@@ -21,16 +24,17 @@ object RetrofitClient {
 
     private val LOGGING_INTERCEPTOR by lazy {
         HttpLoggingInterceptor().setLevel(
-                HttpLoggingInterceptor.Level.BASIC
+                HttpLoggingInterceptor.Level.BODY
         )
     }
 
     private val NETWORK_INTERCEPTOR by lazy {
+
         Interceptor { chain ->
             val original = chain.request()
             val request = original.newBuilder()
                 .addHeader("Accept", "application/json")
-                .addHeader("x-unl-api-key", "6xU02LavUnxuf25hUoKYbWqxGdxJCnJw")
+                .addHeader(API_KEY, DataManager.getApiKey()?:"")
                 .build()
             chain.proceed(request)
         }

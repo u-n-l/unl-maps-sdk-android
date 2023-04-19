@@ -3,6 +3,8 @@ package com.unl.map.sdk
 import android.content.Context
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.module.http.HttpRequestUtil
+import com.unl.map.sdk.prefs.DataManager
+import com.unl.map.sdk.prefs.PrefsManager
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -22,6 +24,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 class UnlMap(context: Context, api_key: String, vpm_id: String) {
     init {
         Mapbox.getInstance(context)
+        PrefsManager.initialize(context)
+        DataManager.saveApiKey(api_key)
+        DataManager.saveVpmId(vpm_id)
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         HttpRequestUtil.setOkHttpClient(
