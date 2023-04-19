@@ -59,6 +59,10 @@ Add the following permissions to your `AndroidManifest.xml` file:
             unlMap.fm=supportFragmentManager
             unlMap.activity=this
 
+            unlMap.lifeCycleOwner=this
+            // enableIndoorMap 
+            unlMap.enableIndoorMap=true
+            unlMap.viewLifecycle=this
             // enableTileSelector method is used to show TileSelector on UnlMapView or not.
             unlMap.enableTileSelector(true)
             // setGridControls method is used to show GridControls on UnlMapView or not.
