@@ -47,7 +47,7 @@ Add the following permissions to your `AndroidManifest.xml` file:
  override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     /// Initializing the UNL SDK
-    UnlMap(applicationContext,getString(R.string.api_key),getString(R.string.vpm_id))
+    UnlMap(applicationContext,getString(R.string.api_key),getString(R.string.vpm_id),EnvironmentType.SANDBOX)
     setContentView(R.layout.activity)
 
     //Getting Instance of `UnlMapView` from `activity.xml`
@@ -58,7 +58,6 @@ Add the following permissions to your `AndroidManifest.xml` file:
             // Need supportFragmentManager and Activity for showing some controls
             unlMap.fm=supportFragmentManager
             unlMap.activity=this
-
             unlMap.lifeCycleOwner=this
             // enableIndoorMap 
             unlMap.enableIndoorMap=true

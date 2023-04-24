@@ -19,5 +19,13 @@ object DataManager {
         return PrefsManager.get().getString(PrefsManager.VPMID, "")
     }
 
+    fun saveEnvironment(envrm: String) {
+        PrefsManager.get().save(PrefsManager.ENVIRONMENT, envrm)
+    }
+
+    fun getEnvironment(): String? {
+        return PrefsManager.get().getString(PrefsManager.ENVIRONMENT, "")
+    }
+
 
 }

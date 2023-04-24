@@ -41,6 +41,7 @@ import com.unl.map.sdk.networks.UnlViewModel
 import com.unl.map.sdk.prefs.DataManager
 import java.net.URI
 import java.net.URISyntaxException
+import java.util.stream.Stream
 
 
 /**
@@ -273,27 +274,8 @@ class UnlMapView @JvmOverloads constructor(
      * @param tileData is an [Enum] and contains values for Map styles.
      */
     override fun loadStyle(tileData: TileEnum) {
-        var url = ""
-        when (tileData) {
-            TileEnum.TERRAIN -> {
-                url = Constants.TERRAIN
-            }
-            TileEnum.BASE -> {
-                url = Constants.BASE
-            }
-            TileEnum.TRAFFIC -> {
-                url = Constants.TRAFFIC
-            }
-            TileEnum.VECTORIAL -> {
-                url = Constants.VECTORIAL
-            }
-            TileEnum.SATELLITE -> {
-                url = Constants.SATELLITE
-            }
-        }
-
         mapbox?.setStyle(Style.Builder()
-            .fromUri(url)) {
+            .fromUri(getTileUrl(tileData))) {
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
 
             if (isVisibleTiles) {
@@ -305,6 +287,53 @@ class UnlMapView @JvmOverloads constructor(
             }
             isVisibleTiles = !isVisibleTiles
         }
+    }
+
+    private fun getTileUrl(tileData: TileEnum) : String
+    {
+        var url = ""
+        var  env = DataManager.getEnvironment()?:""
+        if(env.equals(EnvironmentType.PROD))
+        {
+            when (tileData) {
+                TileEnum.TERRAIN -> {
+                    url = Constants.TERRAIN
+                }
+                TileEnum.BASE -> {
+                    url = Constants.BASE
+                }
+                TileEnum.TRAFFIC -> {
+                    url = Constants.TRAFFIC
+                }
+                TileEnum.VECTORIAL -> {
+                    url = Constants.VECTORIAL
+                }
+                TileEnum.SATELLITE -> {
+                    url = Constants.SATELLITE
+                }
+            }
+        }else
+        {
+            when (tileData) {
+                TileEnum.TERRAIN -> {
+                    url = Constants.TERRAIN_SANDBOX
+                }
+                TileEnum.BASE -> {
+                    url = Constants.BASE_SANDBOX
+                }
+                TileEnum.TRAFFIC -> {
+                    url = Constants.TRAFFIC_SANDBOX
+                }
+                TileEnum.VECTORIAL -> {
+                    url = Constants.VECTORIAL_SANDBOX
+                }
+                TileEnum.SATELLITE -> {
+                    url = Constants.SATELLITE_SANDBOX
+                }
+            }
+        }
+
+        return url
     }
 
     /**

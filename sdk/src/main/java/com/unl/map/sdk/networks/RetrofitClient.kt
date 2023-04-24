@@ -4,6 +4,7 @@ package com.unl.map.sdk.networks
  import com.google.gson.GsonBuilder
  import com.unl.map.sdk.UnlMap
  import com.unl.map.sdk.data.API_KEY
+ import com.unl.map.sdk.data.EnvironmentType
  import com.unl.map.sdk.prefs.DataManager
  import okhttp3.Interceptor
  import okhttp3.OkHttpClient
@@ -14,8 +15,9 @@ package com.unl.map.sdk.networks
 
 
 object RetrofitClient {
-    var BASE_URL = "https://api.unl.global/v1/"  //version 1
-   // var BASE_URL = "https://sandbox.api.unl.global/v1/"  //version 1
+
+    var BASE_URL_PROD = "https://api.unl.global/v1/"
+    var BASE_URL_SANDBOX = "https://sandbox.api.unl.global/v1/"
 
 
     val unlMapApi: UnlMapApi by lazy {
@@ -54,10 +56,23 @@ object RetrofitClient {
         .create()
 
     private val RETROFIT by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(OK_HTTP_CLIENT)
-            .build()
+     var  env = DataManager.getEnvironment()?:""
+        if(env.equals(EnvironmentType.PROD))
+        {
+            Retrofit.Builder()
+                .baseUrl(BASE_URL_PROD)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(OK_HTTP_CLIENT)
+                .build()
+
+        }else{
+
+            Retrofit.Builder()
+                .baseUrl(BASE_URL_SANDBOX)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(OK_HTTP_CLIENT)
+                .build()
+        }
+
     }
 }

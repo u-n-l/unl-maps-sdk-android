@@ -10,6 +10,7 @@ import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.unl.map.sdk.UnlMap
 import com.unl.map.sdk.data.ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_5
+import com.unl.map.sdk.prefs.DataManager
 
 object Constants {
 
@@ -17,16 +18,20 @@ object Constants {
      * [BASE_URL] is the base url for [UnlMap] Style
      */
 
-    private const val BASE_URL = "https://platform.unl.global/"
-  // private const val BASE_URL =   "https://sandbox.platform.unl.global/"
+    private const val BASE_URL_PROD = "https://platform.unl.global/"
+   private const val BASE_URL_SANDBOX =   "https://sandbox.platform.unl.global/"
 
+    const val TERRAIN = "${BASE_URL_PROD}map_styles_terrain.json"
+    const val BASE = "${BASE_URL_PROD}map_styles_base.json"
+    const val TRAFFIC = "${BASE_URL_PROD}map_styles_traffic.json"
+    const val SATELLITE = "${BASE_URL_PROD}map_styles_satellite.json"
+    const val VECTORIAL = "${BASE_URL_PROD}map_styles_vectorial.json"
 
-
-    const val TERRAIN = "${BASE_URL}map_styles_terrain.json"
-    const val BASE = "${BASE_URL}map_styles_base.json"
-    const val TRAFFIC = "${BASE_URL}map_styles_traffic.json"
-    const val SATELLITE = "${BASE_URL}map_styles_satellite.json"
-    const val VECTORIAL = "${BASE_URL}map_styles_vectorial.json"
+    const val TERRAIN_SANDBOX = "${BASE_URL_SANDBOX}map_styles_terrain.json"
+    const val BASE_SANDBOX = "${BASE_URL_SANDBOX}map_styles_base.json"
+    const val TRAFFIC_SANDBOX = "${BASE_URL_SANDBOX}map_styles_traffic.json"
+    const val SATELLITE_SANDBOX = "${BASE_URL_SANDBOX}map_styles_satellite.json"
+    const val VECTORIAL_SANDBOX = "${BASE_URL_SANDBOX}map_styles_vectorial.json"
 }
 
 /**
