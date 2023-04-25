@@ -3,6 +3,7 @@ package com.unl.map.sdk
 import android.content.Context
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.module.http.HttpRequestUtil
+import com.unl.map.sdk.data.EnvironmentType
 import com.unl.map.sdk.prefs.DataManager
 import com.unl.map.sdk.prefs.PrefsManager
 import okhttp3.OkHttpClient
@@ -21,12 +22,13 @@ import okhttp3.logging.HttpLoggingInterceptor
  * @param api_key parameter used to Authorize Map Credentials
  * @param vpm_id  parameter used to Authorize UNL Credentials
  */
-class UnlMap(context: Context, api_key: String, vpm_id: String) {
+class UnlMap(context: Context, api_key: String, vpm_id: String,envType : String) {
     init {
         Mapbox.getInstance(context)
         PrefsManager.initialize(context)
         DataManager.saveApiKey(api_key)
         DataManager.saveVpmId(vpm_id)
+        DataManager.saveEnvironment(envType)
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         HttpRequestUtil.setOkHttpClient(

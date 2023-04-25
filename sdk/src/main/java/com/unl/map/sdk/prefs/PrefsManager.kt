@@ -13,11 +13,12 @@ class PrefsManager private constructor(context: Context) {
     companion object {
         const val APIKEY = "APIKEY"
         const val VPMID = "VPMID"
+        const val ENVIRONMENT = "ENVIRONMENT"
 
 
 
         @StringDef(
-            APIKEY, VPMID
+            APIKEY, VPMID,ENVIRONMENT
             )
         @Retention(AnnotationRetention.SOURCE)
         annotation class PrefKey
