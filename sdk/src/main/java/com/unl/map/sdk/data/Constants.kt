@@ -21,12 +21,15 @@ object Constants {
     private const val BASE_URL_PROD = "https://platform.unl.global/"
    private const val BASE_URL_SANDBOX =   "https://sandbox.platform.unl.global/"
 
+
+    const val RICH = "${BASE_URL_PROD}map_styles_rich.json"
     const val TERRAIN = "${BASE_URL_PROD}map_styles_terrain.json"
     const val BASE = "${BASE_URL_PROD}map_styles_base.json"
     const val TRAFFIC = "${BASE_URL_PROD}map_styles_traffic.json"
     const val SATELLITE = "${BASE_URL_PROD}map_styles_satellite.json"
     const val VECTORIAL = "${BASE_URL_PROD}map_styles_vectorial.json"
 
+    const val RICH_SANDBOX = "${BASE_URL_SANDBOX}map_styles_rich.json"
     const val TERRAIN_SANDBOX = "${BASE_URL_SANDBOX}map_styles_terrain.json"
     const val BASE_SANDBOX = "${BASE_URL_SANDBOX}map_styles_base.json"
     const val TRAFFIC_SANDBOX = "${BASE_URL_SANDBOX}map_styles_traffic.json"

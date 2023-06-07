@@ -6,5 +6,5 @@ package com.unl.map.sdk.data
  * @constructor Create empty Tile enum
  */
 enum class TileEnum {
-    TERRAIN, VECTORIAL,BASE,TRAFFIC,SATELLITE
+    RICH,TERRAIN, VECTORIAL,BASE,TRAFFIC,SATELLITE
 }
