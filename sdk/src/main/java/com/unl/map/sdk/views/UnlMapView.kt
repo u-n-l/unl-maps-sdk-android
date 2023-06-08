@@ -296,6 +296,9 @@ class UnlMapView @JvmOverloads constructor(
         if(env.equals(EnvironmentType.PROD))
         {
             when (tileData) {
+                TileEnum.RICH -> {
+                    url = Constants.RICH
+                }
                 TileEnum.TERRAIN -> {
                     url = Constants.TERRAIN
                 }
@@ -315,6 +318,9 @@ class UnlMapView @JvmOverloads constructor(
         }else
         {
             when (tileData) {
+                TileEnum.RICH -> {
+                    url = Constants.RICH_SANDBOX
+                }
                 TileEnum.TERRAIN -> {
                     url = Constants.TERRAIN_SANDBOX
                 }
