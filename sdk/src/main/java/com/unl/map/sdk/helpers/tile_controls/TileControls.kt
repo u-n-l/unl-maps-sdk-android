@@ -11,6 +11,7 @@ import com.unl.map.sdk.adapters.TilesAdapter
 import com.unl.map.sdk.networks.UnlViewModel
 import com.unl.map.sdk.prefs.DataManager
 import com.unl.map.sdk.views.UnlMapView
+import java.util.logging.Handler
 
 /**
  * [enableTileSelector] method is an Extension method for [UnlMapView] to
@@ -42,6 +43,8 @@ fun UnlMapView.enableTileSelector(
         )
     tileSelectorView?.layoutParams = tileSelectorLayoutParams
 
+
+
     /**
      * Here the purpose of condition is to check whether we want to show SDKs
      * tile controls or not
@@ -51,8 +54,13 @@ fun UnlMapView.enableTileSelector(
     } else {
         if (contains(tileSelectorView!!))
             removeView(tileSelectorView)
-        loadStyle(com.unl.map.sdk.data.TileEnum.TERRAIN)
+        loadStyle(com.unl.map.sdk.data.TileEnum.RICH)
     }
+
+/*    tilesRecycler!!.postDelayed(Runnable {
+        tilesRecycler?.visibility = MapView.GONE
+        ivArrow.visibility = MapView.GONE
+    },1000)*/
     /**
      * This is click Event Listener for Tile selector.
      *

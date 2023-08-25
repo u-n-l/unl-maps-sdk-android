@@ -239,7 +239,10 @@ fun UnlMapView.setGridControls(
      * GridControls on the Map or not.
      */
     if (showGrid) {
-        val imageView = MapView.inflate(context, R.layout.item_grid_selector, null)
+        gridSelectorView = MapView.inflate(context, R.layout.item_grid_selector, null)
+
+        ivGrid = gridSelectorView?.findViewById(R.id.ivTile)!!
+
         val imageViewParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
@@ -249,13 +252,13 @@ fun UnlMapView.setGridControls(
          * GridController Button.
          */
         imageViewParams.setMargins(10, 10, 0, 0)
-        imageView?.layoutParams = imageViewParams
-        this.addView(imageView)
+        gridSelectorView?.layoutParams = imageViewParams
+        this.addView(gridSelectorView)
         /**
          * Use of Click Event Listener is to show [PrecisionDialog] to user so user
          * can selected the [CellPrecision].
          */
-        imageView.setOnClickListener {
+        ivGrid.setOnClickListener {
             val frag = PrecisionDialog(this, cellPrecision)
             fm.let { frag.show(it!!, PrecisionDialog.TAG) }
         }
