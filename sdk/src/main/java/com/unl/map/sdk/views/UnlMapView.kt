@@ -83,7 +83,7 @@ class UnlMapView @JvmOverloads constructor(
     /**
      * [isVisibleGrids] is a Boolean variable which is used to enable/disable Grid Visibility and the default Value for this is false.
      */
-    private var isVisibleGrids: Boolean = false
+     var isVisibleGrids: Boolean = false
 
     /**
      * [CellPrecision] is Enum and is for Grid Controls and the default value is 9.
@@ -106,6 +106,9 @@ class UnlMapView @JvmOverloads constructor(
     lateinit var ivTile: ImageView
     lateinit var ivArrow: ImageView
 
+    lateinit var ivGrid: ImageView
+    var gridCellClickable: Boolean = true
+    var gridSelectorView: View? = null
     /**
      * [tileSelectorView] is the Whole Tile Selector Controls to Switch views eg. "SATELLITE VIEW" or "VECTORIAL VIEW" etc
      */
@@ -136,74 +139,78 @@ class UnlMapView @JvmOverloads constructor(
             /**
              * Added A ClickListener to map so we can recognize the click event for cell Selection
              */
-            mapbox?.addOnMapClickListener {
-                mapbox?.getStyle { style ->
+            if(gridCellClickable)
+            {
+                mapbox?.addOnMapClickListener {
+                    mapbox?.getStyle { style ->
 
-                    var src = style.getSource(SourceIDs.CELL_SOURCE_ID.name)
-                    val zoomLevel = mapbox?.cameraPosition?.zoom!!
-                    val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]!!
-                    /**
-                     * Here a condition is placed on the basis of [isVisibleGrids] an minZoom
-                     * Because we need to show Cell Selector only if Grid is Visible to user.
-                     */
-                    if (isVisibleGrids && zoomLevel >= minZoom) {
-                        val clickedCell =
-                            getCell(it, cellPrecision)
-                        clickedLngLat = locationIdToLngLat(clickedCell?.locationId ?: "")
+                        var src = style.getSource(SourceIDs.CELL_SOURCE_ID.name)
+                        val zoomLevel = mapbox?.cameraPosition?.zoom!!
+                        val minZoom = getZoomLevels()[getMinGridZoom(cellPrecision)]!!
                         /**
-                         * Here the purpose of condition is to check whether there is any source already created or not.
-                         * If already created then we only update the Data for [GeoJsonSource] otherwise we are creating the new [GeoJsonSource]
-                         * for Cell Selection.
+                         * Here a condition is placed on the basis of [isVisibleGrids] an minZoom
+                         * Because we need to show Cell Selector only if Grid is Visible to user.
                          */
-                        if (src != null) {
-                            try {
-                                src = src as GeoJsonSource
-                                src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
-                                    locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
-                                        ?: arrayListOf())))
-                                style.getLayer(LayerIDs.CELL_LAYER_ID.name)
-                                    ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
+                        if (isVisibleGrids && zoomLevel >= minZoom) {
+                            val clickedCell =
+                                getCell(it, cellPrecision)
+                            clickedLngLat = locationIdToLngLat(clickedCell?.locationId ?: "")
+                            /**
+                             * Here the purpose of condition is to check whether there is any source already created or not.
+                             * If already created then we only update the Data for [GeoJsonSource] otherwise we are creating the new [GeoJsonSource]
+                             * for Cell Selection.
+                             */
+                            if (src != null) {
+                                try {
+                                    src = src as GeoJsonSource
+                                    src.setGeoJson(Feature.fromGeometry(Polygon.fromLngLats(
+                                        locationIdToBoundsCoordinates(clickedCell?.locationId ?: "")
+                                            ?: arrayListOf())))
+                                    style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                                        ?.setProperties(PropertyValue(VISIBILITY, Property.VISIBLE))
 
-                            } catch (e: Exception) {
-                                Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
+                                } catch (e: Exception) {
+                                    Log.e(CELL_ERROR, "Error While Updating Grid Cell Source")
+                                }
+                            } else {
+                                try {
+                                    /**
+                                     * Here we create a new [GeoJsonSource] data to draw [Polygon] for selected Cell
+                                     */
+                                    src =
+                                        GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name,
+                                            Polygon.fromLngLats(
+                                                locationIdToBoundsCoordinates(clickedCell?.locationId
+                                                    ?: "")
+                                                    ?: arrayListOf()))
+
+                                    style.addSource(src)
+                                    /**
+                                     * Here we create [FillLayer] for Selected cell and add to Style of Map.
+                                     * And also provide properties like *FillColor*.
+                                     */
+                                    val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
+                                        SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
+                                        ContextCompat.getColor(context,
+                                            R.color.cell_default_color)))
+                                    style.addLayer(fillLayer)
+                                } catch (e: Exception) {
+                                    Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
+                                }
                             }
+                            addLabelAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
                         } else {
-                            try {
-                                /**
-                                 * Here we create a new [GeoJsonSource] data to draw [Polygon] for selected Cell
-                                 */
-                                src =
-                                    GeoJsonSource(SourceIDs.CELL_SOURCE_ID.name,
-                                        Polygon.fromLngLats(
-                                            locationIdToBoundsCoordinates(clickedCell?.locationId
-                                                ?: "")
-                                                ?: arrayListOf()))
-
-                                style.addSource(src)
-                                /**
-                                 * Here we create [FillLayer] for Selected cell and add to Style of Map.
-                                 * And also provide properties like *FillColor*.
-                                 */
-                                val fillLayer = FillLayer(LayerIDs.CELL_LAYER_ID.name,
-                                    SourceIDs.CELL_SOURCE_ID.name).withProperties(PropertyFactory.fillColor(
-                                    ContextCompat.getColor(context,
-                                        R.color.cell_default_color)))
-                                style.addLayer(fillLayer)
-                            } catch (e: Exception) {
-                                Log.e(CELL_ERROR, "Error While Adding Grid Cell Source")
-                            }
+                            /**
+                             * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
+                             */
+                            style.getLayer(LayerIDs.CELL_LAYER_ID.name)
+                                ?.setProperties(PropertyValue(VISIBILITY, Property.NONE))
                         }
-                        addLabelAnnotation(style, clickedLngLat!!, clickedCell?.locationId ?: "")
-                    } else {
-                        /**
-                         * Here we get the Cell [FillLayer] and set visibility to None, so it shouldn't be shown to user
-                         */
-                        style.getLayer(LayerIDs.CELL_LAYER_ID.name)
-                            ?.setProperties(PropertyValue(VISIBILITY, Property.NONE))
                     }
+                    isVisibleGrids
                 }
-                isVisibleGrids
             }
+
             setGridControls(context)
         }
     }
@@ -277,14 +284,13 @@ class UnlMapView @JvmOverloads constructor(
         mapbox?.setStyle(Style.Builder()
             .fromUri(getTileUrl(tileData))) {
             mapbox?.loadGrids(isVisibleGrids, this, cellPrecision)
-
-            if (isVisibleTiles) {
+            /*if (isVisibleTiles) {
                 tilesRecycler?.visibility = GONE
                 ivArrow.visibility = GONE
             } else {
                 tilesRecycler?.visibility = VISIBLE
                 ivArrow.visibility = VISIBLE
-            }
+            }*/
             isVisibleTiles = !isVisibleTiles
         }
     }
