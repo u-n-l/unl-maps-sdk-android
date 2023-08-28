@@ -15,7 +15,7 @@ dependencyResolutionManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/u-n-l/core-java")
             credentials {
-                username = "lokeshpunl"
+                username = "aamir-unl"
                 password = AUTH_TOKEN_1+AUTH_TOKEN_2
             }
         }
